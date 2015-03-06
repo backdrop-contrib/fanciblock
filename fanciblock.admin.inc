@@ -110,7 +110,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#size' => 10,
     '#maxlength' => 8,
     '#description' => t('Enter background color'),
-    // '#element_validate' => array('_fanciblock_validate_color_value'),
+    '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['icon-bg-color']) ? $fanciblock['icon-bg-color'] : '#333333',
   );
 /*----------- end icon bg color -----------*/
@@ -153,7 +153,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#size' => 10,
     '#maxlenght' => 4,
     '#description' => t('Enter background color'),
-    // '#element_validate' => array('_fanciblock_validate_color_value'),
+    '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['icon-border-color']) ? $fanciblock['icon-border-color'] : '#efefef',
   );
 /*----------- end icon border -----------*/
@@ -171,7 +171,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#size' => 10,
     '#maxlenght' => 2,
     '#description' => t('Enter box padding'),
-    // '#element_validate' => array('_fanciblock_validate_color_value'),
+    '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-padding']) ? $fanciblock['box-padding'] : '20',
   );
 /*----------- end Box padding -----------*/
@@ -190,7 +190,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#size' => 10,
     '#maxlenght' => 4,
     '#description' => t('Enter background color'),
-    // '#element_validate' => array('_fanciblock_validate_color_value'),
+    '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-bg-color']) ? $fanciblock['box-bg-color'] : '#efefef',
   );
 /*----------- end Box background -----------*/
@@ -233,7 +233,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#size' => 10,
     '#maxlenght' => 4,
     '#description' => t('Enter background color'),
-    // '#element_validate' => array('_fanciblock_validate_color_value'),
+    '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-border-color']) ? $fanciblock['box-border-color'] : '#efefef',
   );
 /*----------- end box border -----------*/

@@ -213,6 +213,7 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
       '#title' => t('Font Awesome icon color'),
       '#default_value' => $box['fontawesome_icon_color'],
       '#description' => t('Please select icon color.'),
+      '#element_validate' => array('_fanciblock_validate_color_value'),
     );
   }
   $form['actions'] = array('#type' => 'actions');

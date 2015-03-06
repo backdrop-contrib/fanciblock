@@ -67,7 +67,7 @@ clear:both;
   clear: both;
 }
 
-.fanciblock-icon-style-circle .fanciblock-icon  img{
+.fanciblock-icon-style-circle .fanciblock-icon  img, .fanciblock-icon .fa.fanciblock-icon-style-circle {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
@@ -79,7 +79,7 @@ clear:both;
   background-clip: inherit;
   text-align: center;
 }
-.fanciblock-icon .fa.fanciblock-icon-style-square {
+.fanciblock-icon-style-square .fanciblock-icon img, .fanciblock-icon .fa.fanciblock-icon-style-square {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;

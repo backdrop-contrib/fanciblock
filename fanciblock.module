@@ -387,3 +387,24 @@ function _flatten_fanciblock_settings ($settings = array()) {
   }
   return $fanciblock;
 }
+
+/**
+ * Validate a form element that should have an integer value.
+ */
+function _fanciblock_validate_positive_integer($element, &$form_state) {
+  $value = $element['#value'];
+  if (!is_numeric($value) || intval($value) != $value || $value < 0) {
+    form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
+  }
+}
+
+/**
+ * Validate a form element that should have an valid color value.
+ */
+function _fanciblock_validate_color_value($element, &$form_state) {
+  $value = $element['#value'];
+  // Only accept hexadecimal CSS color strings.
+  if (!preg_match('/^#([a-f0-9]{3}){1,2}$/iD', $value) && $value != 'transparent') {
+    form_error($element, t('%name must be a valid hexadecimal CSS color value.', array('%name' => $element['#title'])));
+  }
+}
