@@ -1,0 +1,16 @@
+{
+    "_config_name": "image.style.small_75x75",
+    "label": "Small 75x75",
+    "name": "small_75x75",
+    "effects": [
+        {
+            "name": "image_scale",
+            "data": {
+                "width": "75",
+                "height": "75",
+                "upscale": 0
+            },
+            "weight": 1
+        }
+    ]
+}

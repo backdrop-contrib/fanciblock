@@ -1,0 +1,390 @@
+<?php
+
+/**
+ * @file
+ * A module that include content box with different icons.
+ *
+ * Maintainer: http://www.developmenticon.com/
+ * Written by Himanshu Shakhar (developmenticon)
+ */
+
+function fanciblock_config_info() {
+  $prefixes['fanciblock.settings'] = array(
+    'label' => t('Fanciblock settings'),
+    'group' => t('Configuration'),
+  );
+  return $prefixes;
+}
+
+/**
+ *  Implementation of hook_cron()
+ *  
+ *  Deletes unused fanciblock settings. Fanciblocks are added via Layout builder
+ *  and their settings are saved in hook_block_save to fanciblock.settings.json.
+ *  
+ *  When a block is removed from Layout builder, there is no way to tell this
+ *  happened immediately. This may change; see https://github.com/backdrop/backdrop-issues/issues/767.
+ *  
+ *  Until then this checks for removed layout blocks to delete their settings on 
+ *  cron run.
+ *  
+ */
+function fanciblock_cron() {
+  $all_layouts = layout_get_all_configs('layout');
+  $layouts = array();
+  foreach($all_layouts as $layout_name => $active_layouts) {
+    foreach($active_layouts['content'] as $uuid => $block) {
+      if($block['data']['module'] == 'fanciblock') {
+        $layouts[] = $block['data']['settings']['block_settings']['fanciblock_name'];
+      }
+    }
+  }
+  $settings = config('fanciblock.settings');
+  $data = $settings->get();
+  foreach($data as $key => $setting) {
+    if(is_null($setting) || (is_array($setting) && !in_array($key, $layouts))) {
+      unset($data[$key]);
+    }
+  }
+  $settings->setData($data);
+  $settings->save();
+}
+
+
+/**
+ * Implements hook_permission().
+ */
+function fanciblock_permission() {
+  $perms = array(
+    'administer fanciblock' => array(
+      'title' => t('Administer Icon Box'),
+      'restrict access' => TRUE,
+    ),
+  );
+  return $perms;
+}
+
+function fanciblock_library_info() {
+  // Library One.
+  $libraries['fontawesome'] = array(
+    'title' => 'Font Awesome',
+    'website' => 'http://fortawesome.github.com/Font-Awesome/',
+    'version' => '1.2',
+    'css' => array(
+      backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css' => array(
+        'type' => 'file',
+        'media' => 'screen',
+      ),
+    ),
+  );
+  return $libraries;
+}
+
+/**
+ * Implements hook_menu().
+ */
+function fanciblock_menu() {
+
+  //List box.
+  $items['admin/config/media/fanciblocks/%'] = array(
+    'title' => 'List Box',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('fanciblock_box_overview_form', 4),
+    'access arguments' => array('administer fanciblock'),
+    // 'title callback' => 'fanciblock_overview_title',
+    // 'title arguments' => array(5),
+    'file' => 'fanciblock.box.admin.inc',
+  );
+  //Edit box.
+  $items['admin/config/media/fanciblocks/%/%/edit'] = array(
+    'title' => 'Edit box',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('fanciblock_box_edit_box', 'edit', 4, 5),
+    'access arguments' => array('administer fanciblock'),
+    'file' => 'fanciblock.box.admin.inc',
+  );
+  //Delete box.
+  $items['admin/config/media/fanciblocks/%/%/delete'] = array(
+    'title' => 'Delete box',
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('fanciblock_box_delete_box', 'delete', 4, 5),
+    'access arguments' => array('administer fanciblock'),
+    'file' => 'fanciblock.box.admin.inc',
+  );
+  // THis is just a fake link. It will show up in fanciblock contextual menus
+  // so that we can identify them. THis is because all blocks have their 
+  // $root_path set as 'admin/structure/menu/manage/%' because of Layout, and
+  // that makes it hard to figure which block belongs to which module.
+  $items['fanciblock/stub/%'] = array(
+    'title' => 'Block information',
+    'type' => MENU_LOCAL_ACTION,
+    'context' => MENU_CONTEXT_INLINE,
+    'page callback' => '/',
+    'access callback' => TRUE,
+  );
+  // To use local task menu items, there must be a parent page.
+  $items['fanciblock'] = array(
+    'title' => 'The contextual example page',
+    'page callback' => '/',
+    'access callback' => TRUE,
+  );
+  return $items;
+}
+
+/**
+ *  Implements hook_menu_contextual_links_alter
+ *  
+ *  This adds links to edit individual fanciblock boxes tot the main fanciblock
+ *  contextual links menu. It uses the stub contextual link menu item to find
+ *  fanciblocks, then deletes the stub.
+ */
+function fanciblock_menu_contextual_links_alter(&$links, $router_item, $root_path) {
+ if ($root_path == 'fanciblock/stub/%') {
+    $fanciblock = $router_item['map'][2];
+    $config = config_get('fanciblock.settings', $fanciblock);
+    if($config) {
+      foreach($config as $box) {
+        $links['fb' . $box['boxid']] = array(
+          'title' => 'Edit ' . $box['box_title'],
+          'href' => 'admin/config/media/fanciblocks/' . $box['fanciblock_name'] . '/' . $box['boxid'] . '/edit',
+          'localized_options' => array(),
+        );
+      }
+      $links['ls' . $fanciblock] = array(
+        'title' => 'Re-order',
+        'href' => 'admin/config/media/fanciblocks/' . $fanciblock,
+        'localized_options' => array(),
+      );
+    }
+  unset($links['fanciblock-']);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function fanciblock_theme() {
+  return array(
+    'fanciblock_admin_overview' => array(
+      'file' => 'fanciblock.admin.inc',
+      'variables' => array('title' => NULL, 'name' => NULL),
+    ),
+    'fanciblock_box_overview_form' => array(
+      'file' => 'fanciblock.box.admin.inc',
+      'render element' => 'form',
+    ),
+    'fanciblock_fontawesome_icon_build' => array(
+      'file' => 'fanciblock.box.admin.inc',
+      'variables' => array('class' => NULL, 'size' => NULL, 'style' => NULL, 'looks' => NULL),
+    ),
+    'fanciblock_horizontal' => array(
+      'variables' => array('fanciblock_data' => NULL, 'settings' => NULL, 'preview' => FALSE),
+      'template' => 'theme/fanciblock-horizontal',
+      'preprocess functions' => array('template_preprocess_fanciblock_content'),
+      'file' => 'theme/fanciblock.theme.inc',
+    ),
+    'fanciblock_vertical' => array(
+      'variables' => array('fanciblock_data' => NULL, 'settings' => NULL, 'preview' => FALSE),
+      'template' => 'theme/fanciblock-vertical',
+      'preprocess functions' => array('template_preprocess_fanciblock_content'),
+      'file' => 'theme/fanciblock.theme.inc',
+    ),
+  );
+}
+
+
+/**
+ * Title callback for the fanciblock overview page.
+ */
+function fanciblock_overview_title($fanciblock) {
+  return $fanciblock['title'];
+}
+
+
+/**
+ * Save a fanciblock box.
+ *
+ * @param $box
+ *   An array representing a fanciblock box:
+ *   - boxid: The unique id of the box
+ *   - fanciblock_name: The parent fanciblock name.
+ *   - box_title: The human readable box title.
+ *   - weight: The box order value.
+ *   - fontawesome_icon: The font awesome icon.
+ *   - box_content: The box content.
+ */
+function fanciblock_box_save($fanciblock_name, $box = NULL) {
+  config_set('fanciblock.settings', $fanciblock_name, $box);
+}
+
+/**
+ * Implements hook_block_info().
+ */
+function fanciblock_block_info() {
+  $blocks = array();
+  $blocks['fanciblock']['info'] = t('Fanciblock image');
+  $blocks['fanciblock']['description'] = t('Fanciblock image');
+  
+  $blocks['fanciicon']['info'] = t('Fanciblock icon');
+  $blocks['fanciicon']['description'] = t('Fanciblock icon');
+  return $blocks;
+}
+
+function fanciblock_block_configure($delta = '', $settings = array()) {
+  $form = array();
+  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
+    module_load_include('inc', 'fanciblock', 'fanciblock.admin'); 
+    $settings = _flatten_fanciblock_settings ($settings);
+    $form = fanciblock_edit_box('edit', $delta, $settings);
+  }
+  return $form;
+}
+
+/**
+ *  Saves a block (fanciblock) during block configure.
+ *  
+ *  @param [in] $delta Parameter_Description
+ *  @return Return_Description
+ *  
+ *  @details Details
+ */
+function fanciblock_block_save($delta, &$edit = array()) {
+  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
+    // Check and see if this block's settings already exist. Theyre saved in
+    // config, keyed by the block's unique name (fanciblock_name).
+    $config = config('fanciblock.settings');
+    $default_fid = $config->get('default_fid');
+    $default_fanciblock_uri = $config->get('default_fanciblock_uri');
+    $settings = $config->get($edit['fanciblock_name']);
+    $default_box = array(
+      'fanciblock_name' => $edit['fanciblock_name'], 
+      'boxid' => '', 
+      'box_title' => '', 
+      'weight' => 0, 
+      'box_content' => ''
+    );
+    if ($delta == 'fanciblock') {
+      $default_box += array(
+        'fanciblock_fid' => $default_fid, 
+        'fanciblock_uri' => $default_fanciblock_uri, 
+        'fanciblock_type' => 'fanciblock', 
+      );
+    }
+    elseif($delta == 'fanciicon') {
+      $default_box += array(
+        'fontawesome_icon' => 'fa-tablet',
+        'fanciblock_type' => 'fanciicon', 
+      );
+    }
+
+    // If we dont find the settings, this is a new block being built, so
+    // build and save a default box for each grid.
+    if(!$settings) {
+      $boxes = _fanciblock_add_default_boxes($edit['grid']['grid'], $default_box);
+      fanciblock_box_save($edit['fanciblock_name'], $boxes);
+    }
+    // If we are adding boxes, Grid number will be more than the number of 
+    // settings.
+    elseif($edit['grid']['grid'] > count($settings)) {
+      $adding = $edit['grid']['grid'] - count($settings);
+      $boxes = _fanciblock_add_default_boxes($adding, $default_box);
+      $settings = $settings + $boxes;
+      
+      fanciblock_box_save($edit['fanciblock_name'], $settings);
+    }
+    // Theres no safe way to decrease the number of boxes, so we dont allow that.
+    elseif($edit['grid']['grid'] < count($settings)) {
+      form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
+    }
+  }
+}
+
+function _fanciblock_add_default_boxes($number, $default_box) {  
+  $boxes = array();
+  $i = 1;
+  while($i <= $number) {
+    $id = uniqid();
+    // Set the box title.
+    $default_box['boxid'] = $i . $id;
+    $default_box['box_title'] = $default_box['fanciblock_name'] . $i;
+    $default_box['box_content'] = 'Hello!';
+    $boxes[$i . $id] = $default_box;
+    $i++;
+  }
+  return $boxes;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
+  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
+    $fanciblock = config_get('fanciblock.settings', $settings['fanciblock_name']);
+
+    $data['subject'] = NULL;
+  // THis adds the a fake link in the fanciblock menu so that we can identify it.
+  // See hook_menu for details.
+  $data['content'] =  array(
+    '#markup' => fanciblock_load_fanciblocks($delta, $settings),
+    '#contextual_links' => array(
+      'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
+    ),
+  );
+  return $data;
+  }
+}
+
+
+/**
+ * Load fanciblock and all contained boxes.
+ *
+ * @return
+ *   Array of fanciblock with contained boxes data.
+ */
+function fanciblock_load_fanciblocks($delta, $settings) {
+  // Load the config file.
+  $boxes = config_get('fanciblock.settings', $settings['fanciblock_name']);
+  
+  backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'); // add library fontawesome.css
+  backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.css'); // add css
+  backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
+  
+  $settings = _flatten_fanciblock_settings($settings);
+  $settings['delta'] = $delta;
+  if($settings['icon-position'] == 'right' || $settings['icon-position'] == 'left') {
+    return theme('fanciblock_horizontal', array('fanciblock_data' => $boxes, 'settings' => $settings, 'preview' => FALSE));
+  }
+  elseif($settings['icon-position'] == 'top' || $settings['icon-position'] == 'boxcut') {
+    return theme('fanciblock_vertical', array('fanciblock_data' => $boxes, 'settings' => $settings, 'preview' => FALSE));
+  }
+}
+
+function _flatten_fanciblock_settings ($settings = array()) {
+  dpm($settings);
+  $fanciblock = array();
+  if($settings) {
+    $fanciblock['fanciblock_name']	= $settings['fanciblock_name'];
+    $fanciblock['fanciblock_type']	= $settings['fanciblock_type'];
+    $fanciblock['grid']						= $settings['grid']['grid'];
+    $fanciblock['icon-position']			= $settings['appearance']['icon-position'];
+    $fanciblock['icon-style']				= $settings['appearance']['icon-style'];
+    $fanciblock['icon-size']				= $settings['appearance']['icon-size'];
+    $fanciblock['icon-bg-color']			= $settings['appearance']['icon-bg-color'];
+
+    $fanciblock['icon-color']			= $settings['appearance']['icon-color'];
+
+    $fanciblock['icon-border']				= $settings['appearance']['icon-border-container']['icon-border'];
+    $fanciblock['icon-border-width']		= (int)$settings['appearance']['icon-border-container']['icon-border-width'];
+    $fanciblock['icon-border-style']		= $settings['appearance']['icon-border-container']['icon-border-style'];
+    $fanciblock['icon-border-color']		= $settings['appearance']['icon-border-container']['icon-border-color'];
+
+    $fanciblock['box-bg-color']				= $settings['appearance']['box-bg-container']['box-bg-color'];
+    $fanciblock['box-padding']				= $settings['appearance']['box-padding-container']['box-padding'];
+
+    $fanciblock['box-border']				= $settings['appearance']['box-border-container']['box-border'];
+    $fanciblock['box-border-width']			= (int)$settings['appearance']['box-border-container']['box-border-width'];
+    $fanciblock['box-border-style']			= $settings['appearance']['box-border-container']['box-border-style'];
+    $fanciblock['box-border-color']			= $settings['appearance']['box-border-container']['box-border-color'];
+  }
+  return $fanciblock;
+}

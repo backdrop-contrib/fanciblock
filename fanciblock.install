@@ -1,0 +1,27 @@
+<?php
+/**
+ * @file
+ * Install, update and uninstall functions for the fanciblock module.
+ */
+
+function fanciblock_install() {
+  global $user;
+  $filepath = drupal_get_path('module', 'fanciblock') . '/tulips.jpg';
+  $file = entity_create('file', array());
+  $file->filename = basename($filepath);
+  $file->filepath = $filepath;
+  $file->filemime = file_get_mimetype($filepath);
+  $file->filesize = filesize($filepath);
+  $file->uid = $user->uid;
+  $file->status = FILE_STATUS_PERMANENT;
+  $file->uri = $filepath;
+  $file->display = 1;
+  $file->description = '';
+  $file = file_copy($file, "public://fanciblock_images", FILE_EXISTS_REPLACE);
+  
+  // Set default image
+  $config = config('fanciblock.settings');
+  $config->set('default_fid', $file->fid);
+  $config->set('default_fanciblock_uri', $file->uri);
+  $config->save();
+}

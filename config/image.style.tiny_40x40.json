@@ -1,0 +1,16 @@
+{
+    "_config_name": "image.style.tiny_40x40",
+    "label": "Tiny 40x40",
+    "name": "tiny_40x40",
+    "effects": [
+        {
+            "name": "image_scale",
+            "data": {
+                "width": "40",
+                "height": "40",
+                "upscale": 0
+            },
+            "weight": "1"
+        }
+    ]
+}
