@@ -78,7 +78,7 @@ function _fanciicon_fontawesome_icon_build($box) {
  * @ingroup themeable
  */
 function theme_fanciblock_fontawesome_icon_build($variables) {
-  $output = '<i class="fa '.$variables['class'].' '.$variables['size'].' '.$variables['looks'].'"' .$variables['style'].'></i>';
+  $output = '<i class="fa '.$variables['class'].' '.$variables['size'].' '.$variables['looks'].'"' .$variables['style'].$variables['color'].'></i>';
   return $output;
 }
 
@@ -164,6 +164,10 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
     '#type' => 'hidden',
     '#value' => $box['fanciblock_name'],
   );
+  $form['fanciblock_type'] = array(
+    '#type' => 'hidden',
+    '#value' => $box['fanciblock_type'],
+  );
   $form['fanciblock'] = array(
     '#type' => 'value',
     '#value' => $fanciblock,
@@ -204,6 +208,12 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
       '#default_value' => $box['fontawesome_icon'],
       '#description' => t('Please select font awesome icon. For more info see: <a href="http://fortawesome.github.io/Font-Awesome/cheatsheet/" target="_blank">Font Awesome Cheatsheet</a>.'),
     );
+    $form['fontawesome_icon_color'] = array(
+      '#type' => 'textfield',
+      '#title' => t('Font Awesome icon color'),
+      '#default_value' => $box['fontawesome_icon_color'],
+      '#description' => t('Please select icon color.'),
+    );
   }
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
@@ -241,11 +251,11 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     'weight' => $form_state['values']['weight'],
     'box_content' => $form_state['values']['box_content'],
     'boxid' => $form_state['values']['boxid'],
-    'fanciblock_type' => $fanciblock[$form_state['values']['boxid']],
+    'fanciblock_type' => $form_state['values']['fanciblock_type'],
   );
   dpm($fanciblock[$form_state['values']['boxid']]);
   // Save type-specific values. Start with fanciblock.
-  if($fanciblock[$form_state['values']['boxid']]['fanciblock_type'] == 'fanciblock') {
+  if($form_state['values']['fanciblock_type'] == 'fanciblock') {
     // If the image field is set, save the image.
     if($form_state['values']['fanciblock_uri']) {
       $file = file_load($form_state['values']['fanciblock_uri']);
@@ -262,8 +272,9 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     }
   }
   // If its a fanciicon, save the icon value. Its a select so its never empty.
-  elseif($fanciblock[$form_state['values']['boxid']]['fanciblock_type'] == 'fanciicon') {
+  elseif($form_state['values']['fanciblock_type'] == 'fanciicon') {
     $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
+    $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
   dpm($box);
   $fanciblock[$form_state['values']['boxid']] = $box;

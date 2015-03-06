@@ -37,10 +37,6 @@ function template_preprocess_fanciblock_content(&$vars) {
     $vars['icon_position']		= 'fanciblock-icon-position-'.$vars['settings']['icon-position'];
     $vars['icon_looks']			= 'fanciblock-icon-style-'.$vars['settings']['icon-style'];
     $vars['icon_size']			= 'fanciblock-icon-size-'.$vars['settings']['icon-size'];
-
-    if($vars['fanciblock_type'] == 'fanciicon') {
-      $vars['icon_color']		= 'color:'.$vars['settings']['icon-color'].';';
-    }
     
     // Build background color style sentence if settings allow, otherwise set as
     // transparent.
@@ -58,7 +54,7 @@ function template_preprocess_fanciblock_content(&$vars) {
     if($vars['settings']['icon-style']			!= 'none')		{$vars['icon_bg_border']	= $vars['icon_bg_color'] . $vars['icon_border']; }
 
     // Create icon style sentence by joining icon color and background border.
-    $vars['icon_style']							= 'style='.$vars['icon_color'] . $vars['icon_bg_border']; // icon styles
+    $vars['icon_style']							= 'style=' . $vars['icon_bg_border']; // icon styles
 
     // Build the box settings: set the bg color to transparent if the setting is
     // off.
@@ -110,7 +106,8 @@ function template_preprocess_fanciblock_content(&$vars) {
         'class' => $item['fontawesome_icon'], 
         'size' => $vars['icon_size'], 
         'looks' => $vars['icon_looks'], 
-        'style' => $vars['icon_style']
+        'style' => $vars['icon_style'],
+        'color' => 'color:'.$item['fontawesome_icon_color']
       ));
     }
     // Add boxes

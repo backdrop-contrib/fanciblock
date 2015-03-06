@@ -101,19 +101,6 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       '#default_value' => isset($fanciblock['icon-size']) ? $fanciblock['icon-size'] : 'medium',
     );
   /*----------- end icon size -----------*/
-
-  /*----------- icon color -----------*/
-    $form['appearance']['icon-color'] = array(
-      '#type' => 'textfield',
-      '#title' => t('Icon Color'),
-      '#size' => 10,
-      '#maxlength' => 7,
-      //'#element_validate' => array('_fanciicon_validate_positive_integer'),
-      '#description' => t('Enter background color'),
-      // '#element_validate' => array('_fanciicon_validate_color_value'),
-      '#default_value' => isset($fanciblock['icon-color']) ? $fanciblock['icon-color'] : '#333333',
-    );
-  /*----------- end icon color -----------*/
   }
 
 /*----------- icon bg color -----------*/
