@@ -320,17 +320,20 @@ function _fanciblock_add_default_boxes($number, $default_box) {
 function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     $fanciblock = config_get('fanciblock.settings', $settings['fanciblock_name']);
-
-    $data['subject'] = NULL;
-  // THis adds the a fake link in the fanciblock menu so that we can identify it.
-  // See hook_menu for details.
-  $data['content'] =  array(
-    '#markup' => fanciblock_load_fanciblocks($delta, $settings),
-    '#contextual_links' => array(
-      'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
-    ),
-  );
-  return $data;
+    // Block settings stay in Layout even if the module is unintalled, and cause
+    // white-screen on view. So dont show anything unless we find a config file.
+    if($fanciblock) {
+      $data['subject'] = NULL;
+      // THis adds the a fake link in the fanciblock menu so that we can identify it.
+      // See hook_menu for details.
+      $data['content'] =  array(
+        '#markup' => fanciblock_load_fanciblocks($delta, $settings),
+        '#contextual_links' => array(
+          'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
+        ),
+      );
+      return $data;
+    }
   }
 }
 
@@ -360,7 +363,6 @@ function fanciblock_load_fanciblocks($delta, $settings) {
 }
 
 function _flatten_fanciblock_settings ($settings = array()) {
-  dpm($settings);
   $fanciblock = array();
   if($settings) {
     $fanciblock['fanciblock_name']	= $settings['fanciblock_name'];
@@ -371,7 +373,9 @@ function _flatten_fanciblock_settings ($settings = array()) {
     $fanciblock['icon-size']				= $settings['appearance']['icon-size'];
     $fanciblock['icon-bg-color']			= $settings['appearance']['icon-bg-color'];
 
-    $fanciblock['icon-color']			= $settings['appearance']['icon-color'];
+    if($settings['fanciblock_type'] == 'fanciicon') {
+      $fanciblock['icon-color']			= $settings['appearance']['icon-color'];
+    }
 
     $fanciblock['icon-border']				= $settings['appearance']['icon-border-container']['icon-border'];
     $fanciblock['icon-border-width']		= (int)$settings['appearance']['icon-border-container']['icon-border-width'];
