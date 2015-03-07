@@ -5,6 +5,52 @@
  */
 
 /**
+ * @file
+ * Administrative page callbacks for fanciblock module.
+ */
+
+/**
+ * Menu callback which shows an overview page of all the fanciblock.
+ */
+function fanciblock_overview_page() {
+  $result = config_get('fanciblock.settings');
+  dpm($result);
+  
+  if($result) {
+    $header = array(t('fanciblock Name'), 'data' => t('Operations'));
+    $rows = array();
+    foreach ($result as $key => $fanciblock) {
+      if(is_array($fanciblock)) {
+        $row = array();
+        $row[] = check_plain($key);
+        $row[] = array('data' => l(t('edit'), 'admin/config/media/fanciblocks/' . $key));
+        $rows[] = $row;
+      }
+    }
+  }
+  else {
+    $header = array(t('fanciblock Name'), array('data' => t('Operations')));
+    $rows = array();
+    $rows[] = array(array('data' => t('There are no fanciblock yet')));
+  }
+  return theme('table', array('header' => $header, 'rows' => $rows));
+}
+
+/**
+ * Returns HTML for a fanciblock title and description for the fanciblock overview page.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - title: The fanciblock's title.
+ *
+ * @ingroup themeable
+ */
+function theme_fanciblock_admin_overview($variables) {
+  $output = check_plain($variables['title']);
+  return $output;
+}
+
+/**
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
 function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
@@ -151,7 +197,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('Icon Custom Border Color'),
     '#title_display' => 'invisible',
     '#size' => 10,
-    '#maxlenght' => 4,
+    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['icon-border-color']) ? $fanciblock['icon-border-color'] : '#efefef',
@@ -169,7 +215,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('Box Padding'),
     '#title_display' => 'invisible',
     '#size' => 10,
-    '#maxlenght' => 2,
+    '#maxlength' => 2,
     '#description' => t('Enter box padding'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-padding']) ? $fanciblock['box-padding'] : '20',
@@ -188,7 +234,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('Box Custom Background Color'),
     '#title_display' => 'invisible',
     '#size' => 10,
-    '#maxlenght' => 4,
+    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-bg-color']) ? $fanciblock['box-bg-color'] : '#efefef',
@@ -231,7 +277,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('Box Custom Border Color'),
     '#title_display' => 'invisible',
     '#size' => 10,
-    '#maxlenght' => 4,
+    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-border-color']) ? $fanciblock['box-border-color'] : '#efefef',
@@ -239,72 +285,4 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
 /*----------- end box border -----------*/
 
   return $form;
-}
-
-/**
- * Returns whether a fanciblock name already exists.
- *
- * @see fanciblock_edit_box()
- * @see form_validate_machine_name()
- */
-function fanciblock_edit_box_name_exists($value) {
-  // 'fanciblock-' is added to the fanciblock name to avoid name-space conflicts.
-  $value = 'fanciblock-' . $value;
-  $fanciblock_exists = db_query_range('SELECT 1 FROM {fanciblock} WHERE fanciblock_name = :fanciblock', 0, 1, array(':fanciblock' => $value))->fetchField();
-
-  return $fanciblock_exists;
-}
-
-/**
- * Submit function for the 'Delete' button on the fanciblock editing form.
- */
-function fanciblock_delete_box_submit_call($form, &$form_state) {
-  $form_state['redirect'] = 'fanciblocks/manage/' . $form_state['values']['fanciblock_name'] . '/delete';
-}
-
-/**
- * Menu callback; check access and get a confirm form for deletion of a fanciblock.
- */
-function fanciblock_delete_box($form, &$form_state, $fanciblock) {
-  $form['#fanciblock'] = $fanciblock;
-  $caption = '';
-  $caption .= '<p>' . t('This action cannot be undone.') . '</p>';
-  return confirm_form($form, t('Are you sure you want to delete the fanciblock %title?', array('%title' => $fanciblock['title'])), 
-  'fanciblocks/', $caption, t('Delete'));
-}
-
-/**
- * Delete a fanciblock.
- */
-function fanciblock_delete_box_submit($form, &$form_state) {
-  $fanciblock = $form['#fanciblock'];
-  $form_state['redirect'] = 'fanciblocks';
-
-  // Delete the fanciblock and all its boxes.
-  fanciblock_delete($fanciblock);
-
-  $t_args = array('%title' => $fanciblock['title']);
-  drupal_set_message(t('The fanciblock %title has been deleted.', $t_args));
-  watchdog('fanciblock', 'Deleted fanciblock %title and all its boxes.', $t_args, WATCHDOG_NOTICE);
-}
-
-/**
- * Validate a form element that should have an integer value.
- */
-function _fanciblock_validate_positive_integer($element, &$form_state) {
-  $value = $element['#value'];
-  if (!is_numeric($value) || intval($value) != $value || $value < 0) {
-    form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
-  }
-}
-
-/**
- * Validate a form element that should have an valid color value.
- */
-function _fanciblock_validate_color_value($element, &$form_state) {
-  $value = $element['#value'];
-  // Only accept hexadecimal CSS color strings.
-  if (!preg_match('/^#([a-f0-9]{3}){1,2}$/iD', $value) && $value != 'transparent') {
-    form_error($element, t('%name must be a valid hexadecimal CSS color value.', array('%name' => $element['#title'])));
-  }
 }

@@ -86,13 +86,18 @@ function fanciblock_library_info() {
 function fanciblock_menu() {
 
   //List box.
+  $items['admin/config/media/fanciblocks'] = array(
+    'title' => 'List all Fanciblocks',
+    'page callback' => 'fanciblock_overview_page',
+    'access arguments' => array('administer fanciblock'),
+    'file' => 'fanciblock.admin.inc',
+  );
+  //List box.
   $items['admin/config/media/fanciblocks/%'] = array(
     'title' => 'List Box',
     'page callback' => 'backdrop_get_form',
     'page arguments' => array('fanciblock_box_overview_form', 4),
     'access arguments' => array('administer fanciblock'),
-    // 'title callback' => 'fanciblock_overview_title',
-    // 'title arguments' => array(5),
     'file' => 'fanciblock.box.admin.inc',
   );
   //Edit box.
@@ -124,8 +129,8 @@ function fanciblock_menu() {
   );
   // To use local task menu items, there must be a parent page.
   $items['fanciblock'] = array(
-    'title' => 'The contextual example page',
-    'page callback' => '/',
+    'title' => 'The stub page',
+    'page callback' => 'node',
     'access callback' => TRUE,
   );
   return $items;

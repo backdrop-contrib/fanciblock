@@ -1,0 +1,41 @@
+Fanciblock
+==========
+
+DESCRIPTION
+-----------
+Fanciblock module can be used to create image and icon feature boxes.
+
+INSTALLATION
+------------
+1. Copy imce directory to your modules directory
+2. Enable the module at module administration page
+3. Add a Fanciblock in Layout Builder. Two types of Fanciblocks are available:
+ - Fanciblock image: provides feature blocks using uploaded images.
+ - Fanciblock icon: provides feature blocks with fontawesome icon fonts.
+4. Configure the block settings. On save, a default image (or icon) and text 
+be used to create the blocks. 
+5. Navigate to a path where your chosen layout is active to view the Fanciblock.
+6. Use the contextual links menu to edit individual block boxes.
+ - Box icons can be selected from the select list
+ - Box images can be uploaded or changed
+ - Icon colors can be edited individually
+ - Box content and titles can be edited
+7. Block boxes are listed and can be re-ordered at 'admin/config/media/fanciblocks/%'
+
+That's it!
+
+LICENSE
+---------------    
+
+This project is GPL v2 software. See the LICENSE.txt file in this directory 
+for complete text.
+
+CURRENT MAINTAINERS
+---------------    
+
+- Andy Shillingford (https://github.com/docwilmot/)
+
+CREDITS   
+--------------- 
+
+Originally ported from Iconbox module by developmenticon.com, backdropchamp.com

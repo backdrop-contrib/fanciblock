@@ -125,7 +125,6 @@ function theme_fanciblock_box_overview_form($variables) {
       'class' => array('draggable'),
     );
   }
-dpm($form);
 
   if (empty($rows)) {
     $rows[] = array(array('data' => $form['#empty_text'], 'colspan' => '5'));
@@ -150,11 +149,6 @@ dpm($form);
 function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $boxid) {
   $fanciblock = config_get('fanciblock.settings', $fanciblock_name);
   $box = $fanciblock[$boxid];
-  dpm($box);
-  if ($type == 'add' || empty($box)) {
-    // This is an add form, initialize the box.
-    $box = array('fanciblock_name' => $fanciblock_name['fanciblock_name'], 'boxid' => 0, 'box_title' => '', 'fontawesome_icon' => 'fa-tablet', 'weight' => 0, 'box_content' => '');
-  }
 
   $form['boxid'] = array(
     '#type' => 'hidden',
@@ -254,7 +248,6 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     'boxid' => $form_state['values']['boxid'],
     'fanciblock_type' => $form_state['values']['fanciblock_type'],
   );
-  dpm($fanciblock[$form_state['values']['boxid']]);
   // Save type-specific values. Start with fanciblock.
   if($form_state['values']['fanciblock_type'] == 'fanciblock') {
     // If the image field is set, save the image.
@@ -277,7 +270,6 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
-  dpm($box);
   $fanciblock[$form_state['values']['boxid']] = $box;
   fanciblock_box_save($form_state['values']['fanciblock_name'], $fanciblock);
   backdrop_set_message(t('Your configuration has been saved.'));
@@ -290,7 +282,6 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
  * Menu callback; check access and get a confirm form for deletion of a box.
  */
 function fanciblock_box_delete_box($form, &$form_state, $type, $fanciblock_name, $boxid) {
-  dpm($boxid.'pp');
   $form['#fanciblock_name'] = $fanciblock_name;
   $form['#boxid'] = $boxid;
   return confirm_form($form, t('Are you sure you want to delete the box %box?', array('%box' => $fanciblock_name)), 'admin/config/media/fanciblocks/' . $fanciblock_name . '/' . $boxid . '/edit');
@@ -338,7 +329,6 @@ function fanciblock_box_delete_box_submit($form, &$form_state) {
  * CSS parser from the file of css.
  */
 function fanciblock_box_fontawesome_parser($path) {
-  dpm(drupal_get_path('library', 'fontawesome'));
   $css = backdrop_load_stylesheet($path, TRUE);
 
   preg_match_all( '/(?ims)([a-z0-9\s\.\:#_\-@,]+)\{([^\}]*)\}/', $css, $arr);

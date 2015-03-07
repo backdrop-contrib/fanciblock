@@ -12,7 +12,6 @@
  */
 function template_preprocess_fanciblock_content(&$vars) {
   // Each fanciblock instance gets a unique id
-  dpm($vars);
   $fanciblock_id = &backdrop_static('fanciblock_id', 0);
   $vars['id'] = ++$fanciblock_id;
   $vars['i']  = 0;
