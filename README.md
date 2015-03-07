@@ -32,6 +32,13 @@ INSTALLATION
 
 That's it!
 
+Screenshots
+-----------
+
+![Slogan top](/../image-branch/screenshots/capture.png?raw=true "")
+
+![Slogan bottom flipped](/../image-branch/screenshots/capture2.png?raw=true "")
+
 LICENSE
 ---------------    
 
