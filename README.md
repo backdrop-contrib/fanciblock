@@ -13,7 +13,7 @@ INSTALLATION
  - Fanciblock image: provides feature blocks using uploaded images.
  - Fanciblock icon: provides feature blocks with fontawesome icon fonts.
 4. Configure the block settings. On save, a default image (or icon) and text 
-be used to create the blocks. 
+   be used to create the blocks. 
 5. Navigate to a path where your chosen layout is active to view the Fanciblock.
 6. Use the contextual links menu to edit individual block boxes.
  - Box icons can be selected from the select list
@@ -21,6 +21,14 @@ be used to create the blocks.
  - Icon colors can be edited individually
  - Box content and titles can be edited
 7. Block boxes are listed and can be re-ordered at 'admin/config/media/fanciblocks/%'
+8. A list of all Fanciblocks can be found at 'admin/config/media/fanciblocks/'
+ - IMPORTANT! Because of the way Layout builder saves blocks, if you configure
+   a new block, then click "Add Block" but then do not save the layout, the 
+   block settings are still saved in fancibock.settings.json, but the block will
+   not be added to the layout.
+   Until a hook_layout_save() or equivalent lands in core, this will be so.
+   Unused settings are, however cleared by cron, and can be cleared immediately
+   by running cron.
 
 That's it!
 

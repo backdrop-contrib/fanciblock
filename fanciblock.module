@@ -402,6 +402,20 @@ function _fanciblock_validate_positive_integer($element, &$form_state) {
     form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
   }
 }
+/**
+ * Validate a form element that should have an integer value.
+ */
+function _fanciblock_validate_name($element, &$form_state) {
+  $name = $element['#value'];
+
+  if (!preg_match('/^[a-zA-Z0-9_]+$/u', $name)) {
+    form_error($element, t('%name must only contain alphanumeric characters or underscores.', array('%name' => $element['#title'])));
+  }
+ $keys = array_keys(config_get('fanciblock.settings'));
+  if (in_array($name, $keys)) {
+    form_error($element, t('%name must be unique.', array('%name' => $element['#title'])));
+  }
+}
 
 /**
  * Validate a form element that should have an valid color value.

@@ -17,7 +17,7 @@ function fanciblock_overview_page() {
   dpm($result);
   
   if($result) {
-    $header = array(t('fanciblock Name'), 'data' => t('Operations'));
+    $header = array(t('Fanciblock name'), 'data' => t('Operations'));
     $rows = array();
     foreach ($result as $key => $fanciblock) {
       if(is_array($fanciblock)) {
@@ -76,7 +76,9 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('fanciblock name'),
     '#default_value' => $fanciblock['fanciblock_name'],
     '#maxlength' => 27,
-    '#description' => t('A unique name to construct the URL for the fanciblock. It must only contain lowercase letters, numbers and hyphens.'),
+    '#disabled' => !empty($fanciblock['fanciblock_name']),
+    '#element_validate' => array('_fanciblock_validate_name'),
+    '#description' => t('A unique name to construct the URL for the fanciblock. It must only contain lowercase letters, numbers and underscores.'),
   );
 
   // Grid Type
@@ -217,7 +219,6 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#size' => 10,
     '#maxlength' => 2,
     '#description' => t('Enter box padding'),
-    '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-padding']) ? $fanciblock['box-padding'] : '20',
   );
 /*----------- end Box padding -----------*/
