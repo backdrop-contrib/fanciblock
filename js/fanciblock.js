@@ -8,9 +8,9 @@
 
           /*--- get max icon width ----*/
           fa_icon_size = 0;
-          $(this).find(".fanciblock-icon img").each(function(){
+          $(this).find(".fanciblock-icon img, .fanciblock-icon .fa").each(function(){
             fa_width = parseInt($(this).width());
-            if (fa_width > fa_icon_size) {
+            if (fa_width >= fa_icon_size) {
               fa_icon_size = fa_width;
             }
           });
@@ -46,10 +46,15 @@
           /*--- get max fanciblock box height ----*/
           box_height = 0;
           $(this).find(".fanciblock-box").each(function(){
+            img_height = parseInt($(this).find('img').height());
             b_height = parseInt($(this).height());
             if (b_height > box_height) {
               box_height = b_height;
             }
+            if (img_height > box_height) {
+              box_height = img_height;
+            }
+            
           });
           $(this).find(".fanciblock-box").height(box_height);
 

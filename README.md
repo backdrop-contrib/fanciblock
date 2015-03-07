@@ -7,7 +7,7 @@ Fanciblock module can be used to create image and icon feature boxes.
 
 INSTALLATION
 ------------
-1. Copy imce directory to your modules directory
+1. Copy fanciblock directory to your modules directory
 2. Enable the module at module administration page
 3. Add a Fanciblock in Layout Builder. Two types of Fanciblocks are available:
  - Fanciblock image: provides feature blocks using uploaded images.

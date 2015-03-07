@@ -96,18 +96,18 @@ clear:both;
 }
 .fanciblock-icon .fa.fanciblock-icon-size-xlarge.fanciblock-icon-style-circle,
 .fanciblock-icon .fa.fanciblock-icon-size-xlarge.fanciblock-icon-style-square {
-  width: 185px;
-  height: 185px;
-  line-height: 105px;
+  width: 240px;
+  height: 240px;
+  line-height: 240px;
 }
 .fanciblock-icon .fa.fanciblock-icon-size-large {
   font-size: 110px;
 }
 .fanciblock-icon .fa.fanciblock-icon-size-large.fanciblock-icon-style-circle,
 .fanciblock-icon .fa.fanciblock-icon-size-large.fanciblock-icon-style-square {
-  width: 145px;
-  height: 145px;
-  line-height: 145px;
+  width: 180px;
+  height: 180px;
+  line-height: 180px;
 }
 .fanciblock-icon .fa.fanciblock-icon-size-medium {
   font-size: 70px;

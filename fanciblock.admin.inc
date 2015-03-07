@@ -77,7 +77,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#default_value' => $fanciblock['fanciblock_name'],
     '#maxlength' => 27,
     '#disabled' => !empty($fanciblock['fanciblock_name']),
-    '#element_validate' => array('_fanciblock_validate_name'),
+    '#element_validate' => empty($fanciblock['fanciblock_name']) ? array('_fanciblock_validate_name') : array(),
     '#description' => t('A unique name to construct the URL for the fanciblock. It must only contain lowercase letters, numbers and underscores.'),
   );
 
