@@ -146,7 +146,7 @@ function fanciblock_menu() {
 function fanciblock_menu_contextual_links_alter(&$links, $router_item, $root_path) {
  if ($root_path == 'fanciblock/stub/%') {
     $fanciblock = $router_item['map'][2];
-    $config = config_get('fanciblock.settings', $fanciblock);
+    $config = fanciblock_get_settings($fanciblock);
     if($config) {
       foreach($config as $box) {
         $links['fb' . $box['boxid']] = array(
@@ -220,6 +220,8 @@ function fanciblock_overview_title($fanciblock) {
  */
 function fanciblock_box_save($fanciblock_name, $box = NULL) {
   config_set('fanciblock.settings', $fanciblock_name, $box);
+  backdrop_static_reset('fanciblock_get_settings');
+  cache_clear_all('fanciblock', 'cache_fanciblock');
 }
 
 /**
@@ -323,7 +325,7 @@ function _fanciblock_add_default_boxes($number, $default_box, $delta) {
  */
 function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    $fanciblock = config_get('fanciblock.settings', $settings['fanciblock_name']);
+    $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
     // Block settings stay in Layout even if the module is unintalled, and cause
     // white-screen on view. So dont show anything unless we find a config file.
     if($fanciblock) {
@@ -350,7 +352,7 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
  */
 function fanciblock_load_fanciblocks($delta, $settings) {
   // Load the config file.
-  $boxes = config_get('fanciblock.settings', $settings['fanciblock_name']);
+  $boxes = fanciblock_get_settings($settings['fanciblock_name']);
   
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'); // add library fontawesome.css
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.css'); // add css
@@ -427,3 +429,24 @@ function _fanciblock_validate_color_value($element, &$form_state) {
     form_error($element, t('%name must be a valid hexadecimal CSS color value.', array('%name' => $element['#title'])));
   }
 }
+
+/**
+ * Load all fanciblock data.
+ *
+ * @return
+ *   Array of fanciblock data.
+ */
+function fanciblock_get_settings($fanciblock_name) {
+  $fanciblock = &drupal_static(__FUNCTION__);
+  if (!isset($fanciblock[$fanciblock_name])) {
+    if ($cached = cache_get('fanciblock', 'cache_fanciblock')) {
+      $fanciblock = $cached->data;
+    }
+    else {
+      $fanciblock[$fanciblock_name] = config_get('fanciblock.settings', $fanciblock_name);
+      cache_set('fanciblock', $fanciblock, 'cache_fanciblock');
+    }
+  }
+  return $fanciblock[$fanciblock_name];
+}
+

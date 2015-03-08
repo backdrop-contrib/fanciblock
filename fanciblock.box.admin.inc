@@ -94,6 +94,8 @@ function fanciblock_box_overview_form_submit($form, &$form_state) {
     $settings[$key]['weight'] = $weights[$key]['weight'];
   }
   config_set('fanciblock.settings', $form_state['values']['fanciblock_name'], $settings);
+  backdrop_static_reset('fanciblock_get_settings');
+  cache_clear_all('fanciblock', 'cache_fanciblock');
 }
 
 /**
@@ -298,7 +300,9 @@ function fanciblock_box_delete_box_submit($form, &$form_state) {
   // Do the delete.
   unset($settings[$form['#boxid']]);
   config_set('fanciblock.settings', $form['#fanciblock_name'], $settings); 
-  
+  backdrop_static_reset('fanciblock_get_settings');
+  cache_clear_all('fanciblock', 'cache_fanciblock');
+
   // Now we have to reduce the grid number from the layout config by one since
   // we just deleted a grid.
   $all_layouts = layout_get_all_configs('layout');
