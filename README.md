@@ -35,9 +35,11 @@ That's it!
 Screenshots
 -----------
 
-![Slogan top](/../image-branch/screenshots/capture.png?raw=true "")
+![image1](/../image-branch/screenshots/capture.png?raw=true "")
 
-![Slogan bottom flipped](/../image-branch/screenshots/capture2.png?raw=true "")
+![image2](/../image-branch/screenshots/capture2.png?raw=true "")
+
+![image3](/../image-branch/screenshots/capture3.png?raw=true "")
 
 LICENSE
 ---------------    
