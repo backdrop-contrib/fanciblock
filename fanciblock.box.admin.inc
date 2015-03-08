@@ -149,7 +149,6 @@ function theme_fanciblock_box_overview_form($variables) {
 function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $boxid) {
   $fanciblock = config_get('fanciblock.settings', $fanciblock_name);
   $box = $fanciblock[$boxid];
-
   $form['boxid'] = array(
     '#type' => 'hidden',
     '#value' => $boxid,
@@ -190,7 +189,7 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
       '#title' => t('Image'),
       '#type' => 'managed_file',
       '#description' => t('The uploaded image will be displayed on this page using the image style choosen below.'),
-      '#default_value' => config_get('fanciblock.settings', 'default_fid'),
+      '#default_value' => $box['fanciblock_fid'],
       '#upload_location' => 'public://fanciblock_images/',
     );
   }
