@@ -11,7 +11,6 @@
  * Template preprocess handler for 'fanciblock_content' theme.
  */
 function template_preprocess_fanciblock_content(&$vars) {
-  dpm($vars);
   // Each fanciblock instance gets a unique id
   $fanciblock_id = &backdrop_static('fanciblock_id', 0);
   $vars['id'] = ++$fanciblock_id;

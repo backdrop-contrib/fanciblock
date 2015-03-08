@@ -220,8 +220,6 @@ function fanciblock_overview_title($fanciblock) {
  */
 function fanciblock_box_save($fanciblock_name, $box = NULL) {
   config_set('fanciblock.settings', $fanciblock_name, $box);
-  backdrop_static_reset('fanciblock_get_settings');
-  cache_clear_all('fanciblock', 'cache_fanciblock');
 }
 
 /**
@@ -437,16 +435,6 @@ function _fanciblock_validate_color_value($element, &$form_state) {
  *   Array of fanciblock data.
  */
 function fanciblock_get_settings($fanciblock_name) {
-  $fanciblock = &drupal_static(__FUNCTION__);
-  if (!isset($fanciblock[$fanciblock_name])) {
-    if ($cached = cache_get('fanciblock', 'cache_fanciblock')) {
-      $fanciblock = $cached->data;
-    }
-    else {
-      $fanciblock[$fanciblock_name] = config_get('fanciblock.settings', $fanciblock_name);
-      cache_set('fanciblock', $fanciblock, 'cache_fanciblock');
-    }
-  }
-  return $fanciblock[$fanciblock_name];
+  return config_get('fanciblock.settings', $fanciblock_name);
 }
 
