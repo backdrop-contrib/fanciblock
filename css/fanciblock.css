@@ -147,6 +147,7 @@ clear:both;
 }
 .fanciblock-grid .fanciblock-grid-inner {
   margin: 0 0 0 -20px;
+  overflow:hidden;
 }
 .fanciblock-grid .fanciblock-col {
   padding: 0;
