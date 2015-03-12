@@ -14,8 +14,6 @@
  */
 function fanciblock_overview_page() {
   $result = config_get('fanciblock.settings');
-  dpm($result);
-  
   if($result) {
     $header = array(t('Fanciblock name'), 'data' => t('Operations'));
     $rows = array();
