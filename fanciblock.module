@@ -122,15 +122,17 @@ function fanciblock_menu() {
   // that makes it hard to figure which block belongs to which module.
   $items['fanciblock/stub/%'] = array(
     'title' => 'Block information',
-    'type' => MENU_LOCAL_ACTION,
+    'type' => MENU_CALLBACK,
     'context' => MENU_CONTEXT_INLINE,
     'page callback' => '/',
+    'menu_name' => 'fanciblock',
     'access callback' => TRUE,
   );
   // To use local task menu items, there must be a parent page.
   $items['fanciblock'] = array(
     'title' => 'The stub page',
     'page callback' => 'node',
+    'menu_name' => 'fanciblock',
     'access callback' => TRUE,
   );
   return $items;
