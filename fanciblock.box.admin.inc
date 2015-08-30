@@ -4,8 +4,6 @@
  */
 function fanciblock_box_overview_form($form, &$form_state, $fanciblock_name) {
   $form['fanciblock_box']['#tree'] = TRUE;
-  // $result = db_query("SELECT * FROM {fanciblock_box} WHERE fanciblock_name = :fanciblock ORDER BY weight", 
-  // array(':fanciblock' => $fanciblock['fanciblock_name']), array('fetch' => PDO::FETCH_ASSOC));
   
   $result = config_get('fanciblock.settings', $fanciblock_name); 
   backdrop_sort($result, array('weight' => SORT_NUMERIC));

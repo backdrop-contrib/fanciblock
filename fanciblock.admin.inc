@@ -5,12 +5,7 @@
  */
 
 /**
- * @file
- * Administrative page callbacks for fanciblock module.
- */
-
-/**
- * Menu callback which shows an overview page of all the fanciblock.
+ * Menu callback which shows an overview page of all the fanciblocks.
  */
 function fanciblock_overview_page() {
   $result = config_get('fanciblock.settings');
@@ -84,7 +79,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   // Grid Type
   $form['grid']['grid'] = array(
     '#type' => 'select',
-    '#title' => t('Grid'),
+    '#title' => t('Grid Size'),
     '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
     '#default_value' => $grid_count,
   );
@@ -97,7 +92,6 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   $form['appearance']['icon-position'] = array(
     '#type' => 'select',
     '#title' => t('Icon Position'),
-    '#description' => t("Select icon position."),
     '#options' => array(
       "top"  => t('Top'),
       "left" => t('Left'),
@@ -151,18 +145,11 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   /*----------- end icon size -----------*/
   }
 /*----------- Box padding -----------*/
-  $form['appearance']['box-padding-container'] = array(
-    '#type' => 'fieldset', 
-    '#title' => t('Box padding'),
-    '#attributes' => array('class' => array('container-inline')), 
-  );
-  $form['appearance']['box-padding-container']['box-padding'] = array(
+  $form['appearance']['box-padding'] = array(
     '#type' => 'textfield',
     '#title' => t('Box Padding'),
-    '#title_display' => 'invisible',
     '#size' => 10,
     '#maxlength' => 2,
-    '#description' => t('Enter box padding'),
     '#default_value' => isset($fanciblock['box-padding']) ? $fanciblock['box-padding'] : '20',
   );
 /*----------- end Box padding -----------*/
