@@ -257,12 +257,11 @@ function fanciblock_block_configure($delta = '', $settings = array()) {
  */
 function fanciblock_block_save($delta, &$edit = array()) {
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    // Check and see if this block's settings already exist. Theyre saved in
-    // config, keyed by the block's unique name (fanciblock_name).
     $config = config('fanciblock.settings');
+    
+    // Set up defaults.
     $default_fid = $config->get('default_fid');
     $default_fanciblock_uri = $config->get('default_fanciblock_uri');
-    $settings = $config->get($edit['fanciblock_name']);
     $default_box = array(
       'fanciblock_name' => $edit['fanciblock_name'], 
       'boxid' => '', 
@@ -282,6 +281,10 @@ function fanciblock_block_save($delta, &$edit = array()) {
         'fontawesome_icon_color' => '#333333',
       );
     }
+    
+    // Check and see if this block's settings already exist. Theyre saved in
+    // config, keyed by the block's unique name (fanciblock_name).
+    $settings = $config->get($edit['fanciblock_name']);
 
     // If we dont find the settings, this is a new block being built, so
     // build and save a default box for each grid.
