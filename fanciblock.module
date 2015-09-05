@@ -150,6 +150,7 @@ function fanciblock_menu_contextual_links_alter(&$links, $router_item, $root_pat
     $fanciblock = $router_item['map'][2];
     $config = fanciblock_get_settings($fanciblock);
     if($config) {
+      $config = $config['boxes'];
       foreach($config as $box) {
         $links['fb' . $box['boxid']] = array(
           'title' => 'Edit ' . $box['box_title'],
@@ -207,23 +208,6 @@ function fanciblock_overview_title($fanciblock) {
   return $fanciblock['title'];
 }
 
-
-/**
- * Save a fanciblock box.
- *
- * @param $box
- *   An array representing a fanciblock box:
- *   - boxid: The unique id of the box
- *   - fanciblock_name: The parent fanciblock name.
- *   - box_title: The human readable box title.
- *   - weight: The box order value.
- *   - fontawesome_icon: The font awesome icon.
- *   - box_content: The box content.
- */
-function fanciblock_box_save($fanciblock_name, $box = NULL) {
-  config_set('fanciblock.settings', $fanciblock_name, $box);
-}
-
 /**
  * Implements hook_block_info().
  */
@@ -240,8 +224,12 @@ function fanciblock_block_info() {
 function fanciblock_block_configure($delta = '', $settings = array()) {
   $form = array();
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    module_load_include('inc', 'fanciblock', 'fanciblock.admin'); 
-    $settings = _flatten_fanciblock_settings ($settings);
+    module_load_include('inc', 'fanciblock', 'fanciblock.admin');
+    if(!empty($settings)) {
+      $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
+      $settings = _flatten_fanciblock_settings ($fanciblock['settings']);
+      dpm('hu');
+    }
     $form = fanciblock_edit_box('edit', $delta, $settings);
   }
   return $form;
@@ -267,7 +255,8 @@ function fanciblock_block_save($delta, &$edit = array()) {
       'boxid' => '', 
       'box_title' => '', 
       'weight' => 0, 
-      'box_content' => 'Hello!'
+      'box_content' => array('value' => 'Hello!'),
+      'icon_link' => '',
     );
     if ($delta == 'fanciblock') {
       $default_box += array(
@@ -285,27 +274,48 @@ function fanciblock_block_save($delta, &$edit = array()) {
     // Check and see if this block's settings already exist. Theyre saved in
     // config, keyed by the block's unique name (fanciblock_name).
     $settings = $config->get($edit['fanciblock_name']);
-
+dpm($edit);
     // If we dont find the settings, this is a new block being built, so
     // build and save a default box for each grid.
     if(!$settings) {
       $boxes = _fanciblock_add_default_boxes($edit['grid']['grid'], $default_box, $delta);
-      fanciblock_box_save($edit['fanciblock_name'], $boxes);
+      $settings['boxes'] = $boxes;
+      //fanciblock_box_save($edit, $boxes);
     }
     // If we are adding boxes, Grid number will be more than the number of 
     // settings.
-    elseif($edit['grid']['grid'] > count($settings)) {
+    elseif($edit['grid']['grid'] > count($settings['boxes'])) {
       $adding = $edit['grid']['grid'] - count($settings);
       $boxes = _fanciblock_add_default_boxes($adding, $default_box, $delta);
-      $settings = $settings + $boxes;
+      $settings['boxes'] += $boxes;
       
-      fanciblock_box_save($edit['fanciblock_name'], $settings);
+      //fanciblock_box_save($edit, $settings);
     }
     // Theres no safe way to decrease the number of boxes, so we dont allow that.
     elseif($edit['grid']['grid'] < count($settings)) {
       form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
     }
+    $settings['settings'] = $edit;
+    fanciblock_box_save($settings);
   }
+}
+
+/**
+ * Save a fanciblock box.
+ *
+ * @param $box
+ *   An array representing a fanciblock box:
+ *   - boxid: The unique id of the box
+ *   - fanciblock_name: The parent fanciblock name.
+ *   - box_title: The human readable box title.
+ *   - weight: The box order value.
+ *   - fontawesome_icon: The font awesome icon.
+ *   - box_content: The box content.
+ */
+function fanciblock_box_save($settings) {
+  dpm($settings);
+  // dpm($fanciblock_name);
+  config_set('fanciblock.settings', $settings['settings']['fanciblock_name'], $settings);
 }
 
 function _fanciblock_add_default_boxes($number, $default_box, $delta) {  
@@ -329,6 +339,7 @@ function _fanciblock_add_default_boxes($number, $default_box, $delta) {
 function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
+    dpm($fanciblock);
     // Block settings stay in Layout even if the module is unintalled, and cause
     // white-screen on view. So dont show anything unless we find a config file.
     if($fanciblock) {
@@ -336,7 +347,7 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
       // THis adds the a fake link in the fanciblock menu so that we can identify it.
       // See hook_menu for details.
       $data['content'] =  array(
-        '#markup' => fanciblock_load_fanciblocks($delta, $settings),
+        '#markup' => fanciblock_load_fanciblocks($delta, $fanciblock['settings']),
         '#contextual_links' => array(
           'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
         ),
@@ -355,8 +366,9 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
  */
 function fanciblock_load_fanciblocks($delta, $settings) {
   // Load the config file.
-  $boxes = fanciblock_get_settings($settings['fanciblock_name']);
-  
+  $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
+  $boxes = $fanciblock['boxes'];
+  dpm($boxes);
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'); // add library fontawesome.css
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.css'); // add css
   backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
@@ -372,30 +384,16 @@ function fanciblock_load_fanciblocks($delta, $settings) {
 }
 
 function _flatten_fanciblock_settings ($settings = array()) {
-  $fanciblock = array();
-  if($settings) {
-    $fanciblock['fanciblock_name']	= $settings['fanciblock_name'];
-    $fanciblock['fanciblock_type']	= $settings['fanciblock_type'];
-    $fanciblock['grid']						= $settings['grid']['grid'];
-    $fanciblock['icon-position']			= $settings['appearance']['icon-position'];
-    $fanciblock['icon-style']				= $settings['appearance']['icon-style'];
-    $fanciblock['icon-size']				= $settings['appearance']['icon-size'];
-    $fanciblock['icon-bg-color']			= $settings['appearance']['icon-bg-color'];
-
-    $fanciblock['icon-border']				= $settings['appearance']['icon-border-container']['icon-border'];
-    $fanciblock['icon-border-width']		= (int)$settings['appearance']['icon-border-container']['icon-border-width'];
-    $fanciblock['icon-border-style']		= $settings['appearance']['icon-border-container']['icon-border-style'];
-    $fanciblock['icon-border-color']		= $settings['appearance']['icon-border-container']['icon-border-color'];
-
-    $fanciblock['box-bg-color']				= $settings['appearance']['box-bg-container']['box-bg-color'];
-    $fanciblock['box-padding']				= $settings['appearance']['box-padding-container']['box-padding'];
-
-    $fanciblock['box-border']				= $settings['appearance']['box-border-container']['box-border'];
-    $fanciblock['box-border-width']			= (int)$settings['appearance']['box-border-container']['box-border-width'];
-    $fanciblock['box-border-style']			= $settings['appearance']['box-border-container']['box-border-style'];
-    $fanciblock['box-border-color']			= $settings['appearance']['box-border-container']['box-border-color'];
+  $results = &backdrop_static('fanciblock_flatten', array());
+  foreach($settings as $key => $setting) {
+    if(is_array($setting)) {
+      _flatten_fanciblock_settings ($setting);
+    }
+    else {
+      $results[$key] = $setting;
+    }
   }
-  return $fanciblock;
+  return $results;
 }
 
 /**

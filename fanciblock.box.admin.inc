@@ -6,11 +6,13 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock_name) {
   $form['fanciblock_box']['#tree'] = TRUE;
   
   $result = config_get('fanciblock.settings', $fanciblock_name); 
-  backdrop_sort($result, array('weight' => SORT_NUMERIC));
+  dpm($result);
+  $boxes = $result['boxes'];
+  backdrop_sort($boxes, array('weight' => SORT_NUMERIC));
   
   $form['settings'] = array(
     '#type' => 'value',
-    '#value' => $result,
+    '#value' => $boxes,
   );
     
   $form['fanciblock_name'] = array(
@@ -18,7 +20,7 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock_name) {
     '#value' => $fanciblock_name,
   );
     
-  foreach ($result as $box) {
+  foreach ($boxes as $box) {
     $form['fanciblock_box'][$box['boxid']] = array(
       'box_title' => array(
         '#markup' => check_plain($box['box_title']),
@@ -146,7 +148,9 @@ function theme_fanciblock_box_overview_form($variables) {
  */
 function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $boxid) {
   $fanciblock = config_get('fanciblock.settings', $fanciblock_name);
-  $box = $fanciblock[$boxid];
+  $fanciblock_boxes = $fanciblock['boxes'];
+  $box = $fanciblock_boxes[$boxid];
+  
   $form['boxid'] = array(
     '#type' => 'hidden',
     '#value' => $boxid,
@@ -178,7 +182,8 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
     '#description' => t('Optional. Box are displayed in ascending order by weight.'),
   );
   $form['box_content'] = array(
-    '#type' => 'textarea',
+    '#type' => 'text_format',
+    '#format' => 'filtered_html',
     '#title' => t('Box Content'),
     '#default_value' => $box['box_content'],
   );
@@ -207,6 +212,12 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
       '#element_validate' => array('_fanciblock_validate_color_value'),
     );
   }
+  $form['icon_link'] = array(
+    '#type' => 'textfield',
+    '#title' => t('Icon Link'),
+    '#default_value' => $box['icon_link'],
+    '#description' => t('Optional path to which the icon or image will be linked.'),
+  );
   $form['actions'] = array('#type' => 'actions');
   $form['actions']['submit'] = array(
     '#type' => 'submit',
@@ -242,6 +253,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     'box_title' => $form_state['values']['box_title'],
     'weight' => $form_state['values']['weight'],
     'box_content' => $form_state['values']['box_content'],
+    'icon_link' => $form_state['values']['icon_link'],
     'boxid' => $form_state['values']['boxid'],
     'fanciblock_type' => $form_state['values']['fanciblock_type'],
   );
@@ -258,8 +270,8 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     }
     // Otherwise keep the previous values. (We avoid empty boxes.)
     else {
-      $box['fanciblock_fid'] = $fanciblock[$form_state['values']['boxid']]['fanciblock_fid'];
-      $box['fanciblock_uri'] = $fanciblock[$form_state['values']['boxid']]['fanciblock_uri'];
+      $box['fanciblock_fid'] = $fanciblock['boxes'][$form_state['values']['boxid']]['fanciblock_fid'];
+      $box['fanciblock_uri'] = $fanciblock['boxes'][$form_state['values']['boxid']]['fanciblock_uri'];
     }
   }
   // If its a fanciicon, save the icon value. Its a select so its never empty.
@@ -267,8 +279,9 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
-  $fanciblock[$form_state['values']['boxid']] = $box;
-  fanciblock_box_save($form_state['values']['fanciblock_name'], $fanciblock);
+  $fanciblock['boxes'][$form_state['values']['boxid']] = $box;
+  dpm($fanciblock);
+  fanciblock_box_save($fanciblock);
   backdrop_set_message(t('Your configuration has been saved.'));
   // $path = 'fanciblocks/manage/';
   // fanciblock_box_save($box);
@@ -288,38 +301,18 @@ function fanciblock_box_delete_box($form, &$form_state, $type, $fanciblock_name,
  * Process box delete form submissions.
  */
 function fanciblock_box_delete_box_submit($form, &$form_state) {
-  // First we delete the setting from the fanciblock.settings config.
-  $settings = config_get('fanciblock.settings', $form['#fanciblock_name']);
+  $fanciblock = config_get('fanciblock.settings', $form['#fanciblock_name']);
   // Save the name for backdrop_set_message() and watchdog().
-  $deleted = $settings[$form['#boxid']]['box_title'];
+  $deleted = $fanciblock['boxes'][$form['#boxid']]['box_title'];
+  // Now we have to reduce the grid number by one since we are deleting a grid.
+  $grid = $fanciblock['settings']['grid']['grid']--;
   // Do the delete.
-  unset($settings[$form['#boxid']]);
-  config_set('fanciblock.settings', $form['#fanciblock_name'], $settings); 
+  unset($fanciblock['boxes'][$form['#boxid']]);
+  config_set('fanciblock.settings', $form['#fanciblock_name'], $fanciblock); 
 
-  // Now we have to reduce the grid number from the layout config by one since
-  // we just deleted a grid.
-  $all_layouts = layout_get_all_configs('layout');
-  $layout = '';
-  foreach($all_layouts as $layout_name => $active_layouts) {
-    foreach($active_layouts['content'] as $uuid => $block) {
-      if($block['data']['module'] == 'fanciblock' && $block['data']['settings']['block_settings']['fanciblock_name'] == $form['#fanciblock_name']) {
-        $layout = $layout_name;
-        $config = config_get('layout.layout.' . $layout, 'content.' .$uuid);
-        $config['data']['settings']['block_settings']['grid']['grid']--;
-        config_set('layout.layout.' . $layout, 'content.' .$uuid, $config);
-        layout_reset_caches();
-        break 2;
-      }
-    }
-  }
   $t_args = array('%title' => $deleted);
   backdrop_set_message(t('The fanciblock box %title has been deleted.', $t_args));
   watchdog('fanciblock', 'Deleted fanciblock box %title.', $t_args, WATCHDOG_NOTICE);
-  $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $form['#fanciblock_name'];
-  
-  
-  // $box = $form['#box'];
-  // fanciblock_box_delete($box['boxid']);
 }
 
 /**

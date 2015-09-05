@@ -17,7 +17,12 @@ function fanciblock_install() {
   $file->uri = $filepath;
   $file->display = 1;
   $file->description = '';
-  $file = file_copy($file, "public://fanciblock_images", FILE_EXISTS_REPLACE);
+  
+  $fanciblock_directory = 'public://fanciblock_images'; 
+  file_prepare_directory($fanciblock_directory, FILE_CREATE_DIRECTORY);
+  
+  $file = file_copy($file, $fanciblock_directory, FILE_EXISTS_REPLACE);
+  file_usage_add($file, 'fanciblock', 'user', 1);
   
   // Set default image
   $config = config('fanciblock.settings');
