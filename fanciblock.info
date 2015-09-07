@@ -2,3 +2,4 @@ name = Fanciblock
 description = Allows administrators to create and configure blocks with images and icons.
 package = Fanciblock
 backdrop = 1.x
+type = module
