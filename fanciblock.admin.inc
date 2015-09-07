@@ -9,7 +9,6 @@
  */
 function fanciblock_overview_page() {
   $result = config_get('fanciblock.settings');
-  dpm($result);
   
   if($result) {
     $header = array(t('Fanciblock name'), 'data' => t('Operations'));
@@ -62,15 +61,26 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#value' => $delta,
   );
 
-  $form['fanciblock_name'] = array(
+  $form['fanciblock_title'] = array(
     '#type' => 'textfield',
-    '#title' => t('Fanciblock name'),
-    '#default_value' => $fanciblock['fanciblock_name'],
-    '#maxlength' => 27,
     '#required' => TRUE,
+    '#title' => t('Fanciblock Title'),
+    '#description' => t('A unique name for this Fanciblock.'),
+    '#default_value' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : '',
+  );
+  $form['fanciblock_name'] = array(
+    '#required' => TRUE,
+    '#type' => 'machine_name',
+    '#title' => t('Fanciblock ID'),
+    '#default_value' => isset($fanciblock['fanciblock_name']) ? $fanciblock['fanciblock_name'] : '',
+    '#description' => t('A unique name for this Fanciblock. It must only contain lowercase letters, numbers and hyphens.'),
+    '#machine_name' => array(
+      'exists' => 'fanciblock_load',
+      'source' => array('block_settings', 'fanciblock_title'),
+    ),
   );
 
-  // Grid Type
+    // Grid Type
   $form['grid']['grid'] = array(
     '#type' => 'select',
     '#title' => t('Grid Size'),
@@ -276,7 +286,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   $form['appearance']['box-border-status'] = array(
     '#type' => 'checkbox',
     '#title' => t('Box Border'),
-    '#default_value' => isset($fanciblock['box-border']) ? $fanciblock['box-border'] : false,
+    '#default_value' => isset($fanciblock['box-border-status']) ? $fanciblock['box-border-status'] : false,
   );
   $form['appearance']['box-border-container'] = array(
     '#type' => 'fieldset', 

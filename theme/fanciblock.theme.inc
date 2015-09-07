@@ -18,6 +18,9 @@ function template_preprocess_fanciblock_content(&$variables) {
 
   // Make all variables available.
   $variables['box_padding'] = NULL;
+  $variables['icon_size'] = NULL;
+  $variables['icon_style'] = NULL;
+  $box_border = NULL;
   
   $variables['icon_bg_color'] = NULL;
   $variables['icon_bg_color_status'] = NULL;
@@ -103,7 +106,6 @@ function template_preprocess_fanciblock_content(&$variables) {
   
   //
   $variables['items'] = array();
-  dpm($variables);
   $i = 0;
   $item_number = count($variables['fanciblock_data']);
   foreach ($variables['fanciblock_data'] as $box => $item ) {

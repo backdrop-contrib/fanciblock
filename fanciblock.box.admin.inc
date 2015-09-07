@@ -2,22 +2,20 @@
 /**
  * Form for editing an entire fanciblock box order at once.
  */
-function fanciblock_box_overview_form($form, &$form_state, $fanciblock_name) {
+function fanciblock_box_overview_form($form, &$form_state, $fanciblock) {
   $form['fanciblock_box']['#tree'] = TRUE;
   
-  $result = config_get('fanciblock.settings', $fanciblock_name); 
-  dpm($result);
-  $boxes = $result['boxes'];
+  $boxes = $fanciblock['boxes'];
   backdrop_sort($boxes, array('weight' => SORT_NUMERIC));
   
-  $form['settings'] = array(
+  $form['boxes'] = array(
     '#type' => 'value',
     '#value' => $boxes,
   );
     
-  $form['fanciblock_name'] = array(
+  $form['fanciblock'] = array(
     '#type' => 'value',
-    '#value' => $fanciblock_name,
+    '#value' => $fanciblock,
   );
     
   foreach ($boxes as $box) {
@@ -26,7 +24,7 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock_name) {
         '#markup' => check_plain($box['box_title']),
       ),
       'box_content' => array(
-        '#markup' => $box['box_content'],
+        '#markup' => filter_xss($box['box_content']['value']),
       ),
       'fontawesome_icon' => array(
         '#markup' => _fanciicon_fontawesome_icon_build($box),
@@ -57,6 +55,9 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock_name) {
   return $form;
 }
 
+/**
+ * Returns a small icon for list views.
+ */
 function _fanciicon_fontawesome_icon_build($box) {
   if($box['fanciblock_type'] == 'fanciicon') {
     return theme('fanciblock_fontawesome_icon_build', array('class' => $box['fontawesome_icon']));
@@ -65,8 +66,6 @@ function _fanciicon_fontawesome_icon_build($box) {
     return theme('image_style', array('uri' => $box['fanciblock_uri'], 'style_name' => 'tiny_40x40'));
   }
 }
-
-
 
 /**
  * Returns HTML for a fanciblock title and description for the fanciblock overview page.
@@ -87,13 +86,16 @@ function theme_fanciblock_fontawesome_icon_build($variables) {
  * @see box_overview_form()
  */
 function fanciblock_box_overview_form_submit($form, &$form_state) {
+  $fanciblock = $form_state['values']['fanciblock'];
   $weights = $form_state['values']['fanciblock_box'];
-  $settings = $form_state['values']['settings'];
-  
-  foreach ($settings as $key => $setting) {
-    $settings[$key]['weight'] = $weights[$key]['weight'];
+  $boxes = $form_state['values']['boxes'];
+
+  foreach ($boxes as $key => $box) {
+    $boxes[$key]['weight'] = $weights[$key]['weight'];
   }
-  config_set('fanciblock.settings', $form_state['values']['fanciblock_name'], $settings);
+  $fanciblock['boxes'] = $boxes;
+
+  fanciblock_box_save($fanciblock);
 }
 
 /**
@@ -146,11 +148,10 @@ function theme_fanciblock_box_overview_form($variables) {
 /**
  * Menu callback; Build the fanciblock box editing form.
  */
-function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $boxid) {
-  $fanciblock = config_get('fanciblock.settings', $fanciblock_name);
+function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid, $type) {
   $fanciblock_boxes = $fanciblock['boxes'];
   $box = $fanciblock_boxes[$boxid];
-  
+
   $form['boxid'] = array(
     '#type' => 'hidden',
     '#value' => $boxid,
@@ -185,7 +186,7 @@ function fanciblock_box_edit_box($form, &$form_state, $type, $fanciblock_name, $
     '#type' => 'text_format',
     '#format' => 'filtered_html',
     '#title' => t('Box Content'),
-    '#default_value' => $box['box_content'],
+    '#default_value' => $box['box_content']['value'],
   );
   if($box['fanciblock_type'] == 'fanciblock') {
     $form['fanciblock_uri'] = array(
@@ -280,19 +281,15 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
   $fanciblock['boxes'][$form_state['values']['boxid']] = $box;
-  dpm($fanciblock);
   fanciblock_box_save($fanciblock);
   backdrop_set_message(t('Your configuration has been saved.'));
-  // $path = 'fanciblocks/manage/';
-  // fanciblock_box_save($box);
-  // $form_state['redirect'] = $path . $box['fanciblock_name'];
 }
 
 /**
  * Menu callback; check access and get a confirm form for deletion of a box.
  */
-function fanciblock_box_delete_box($form, &$form_state, $type, $fanciblock_name, $boxid) {
-  $form['#fanciblock_name'] = $fanciblock_name;
+function fanciblock_box_delete_box($form, &$form_state, $fanciblock, $boxid, $type) {
+  $form['#fanciblock_name'] = $fanciblock['fanciblock_name'];
   $form['#boxid'] = $boxid;
   return confirm_form($form, t('Are you sure you want to delete the box %box?', array('%box' => $fanciblock_name)), 'admin/config/media/fanciblocks/' . $fanciblock_name . '/' . $boxid . '/edit');
 }

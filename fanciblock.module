@@ -2,12 +2,15 @@
 
 /**
  * @file
- * A module that include content box with different icons.
+ * Fanciblock module creates configurable feature boxes with images or icons.
  *
- * Maintainer: http://www.developmenticon.com/
- * Written by Himanshu Shakhar (developmenticon)
+ * Maintainer: Wilmoth Andy Shillingford
+ * Inspired by Iconbox module by Himanshu Shakhar (developmenticon)
  */
 
+/**
+ *  Implementation of hook_config_info()
+ */
 function fanciblock_config_info() {
   $prefixes['fanciblock.settings'] = array(
     'label' => t('Fanciblock settings'),
@@ -30,6 +33,7 @@ function fanciblock_config_info() {
  *  
  */
 function fanciblock_cron() {
+  // Find all Fanciblocks stored in Layout settings and save to an array.
   $all_layouts = layout_get_all_configs('layout');
   $layouts = array();
   foreach($all_layouts as $layout_name => $active_layouts) {
@@ -39,9 +43,12 @@ function fanciblock_cron() {
       }
     }
   }
+  // Then check if the Fanciblocks in our Fanciblock config are actually in a 
+  // layout by checking if its ID is in the $layouts array we just built.
   $settings = config('fanciblock.settings');
   $data = $settings->get();
   foreach($data as $key => $setting) {
+    // If the Fanciblock setting is no longer in a Layout, delete it.
     if(is_null($setting) || (is_array($setting) && !in_array($key, $layouts))) {
       unset($data[$key]);
     }
@@ -64,6 +71,9 @@ function fanciblock_permission() {
   return $perms;
 }
 
+/**
+ * Implements hook_library_info().
+ */
 function fanciblock_library_info() {
   // Library One.
   $libraries['fontawesome'] = array(
@@ -84,7 +94,6 @@ function fanciblock_library_info() {
  * Implements hook_menu().
  */
 function fanciblock_menu() {
-
   //List box.
   $items['admin/config/media/fanciblocks'] = array(
     'title' => 'List all Fanciblocks',
@@ -93,26 +102,32 @@ function fanciblock_menu() {
     'file' => 'fanciblock.admin.inc',
   );
   //List box.
-  $items['admin/config/media/fanciblocks/%'] = array(
+  $items['admin/config/media/fanciblocks/%fanciblock'] = array(
     'title' => 'List Box',
+    'title callback' => 'fanciblock_title_callback',
+    'title arguments' => array(4),
     'page callback' => 'backdrop_get_form',
     'page arguments' => array('fanciblock_box_overview_form', 4),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
   //Edit box.
-  $items['admin/config/media/fanciblocks/%/%/edit'] = array(
+  $items['admin/config/media/fanciblocks/%fanciblock/%/edit'] = array(
     'title' => 'Edit box',
+    'title callback' => 'fanciblock_title_callback',
+    'title arguments' => array(4),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_edit_box', 'edit', 4, 5),
+    'page arguments' => array('fanciblock_box_edit_box', 4, 5, 6),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
   //Delete box.
-  $items['admin/config/media/fanciblocks/%/%/delete'] = array(
+  $items['admin/config/media/fanciblocks/%fanciblock/%/delete'] = array(
     'title' => 'Delete box',
+    'title callback' => 'fanciblock_title_callback',
+    'title arguments' => array(4),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_delete_box', 'delete', 4, 5),
+    'page arguments' => array('fanciblock_box_delete_box', 4, 5, 6),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
@@ -136,6 +151,22 @@ function fanciblock_menu() {
     'access callback' => TRUE,
   );
   return $items;
+}
+
+/**
+ * Title callback.
+ */
+function fanciblock_title_callback($fanciblock) {
+  return $fanciblock['settings']['fanciblock_title'];
+}
+
+/**
+ * Loads a Fanciblock.
+ */
+function fanciblock_load($fanciblock_name) {
+  $config = config('fanciblock.settings');
+  $fanciblock = $config->get($fanciblock_name);
+  return $fanciblock;
 }
 
 /**
@@ -221,6 +252,9 @@ function fanciblock_block_info() {
   return $blocks;
 }
 
+/**
+ * Implements hook_block_configure().
+ */
 function fanciblock_block_configure($delta = '', $settings = array()) {
   $form = array();
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
@@ -228,7 +262,6 @@ function fanciblock_block_configure($delta = '', $settings = array()) {
     if(!empty($settings)) {
       $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
       $settings = _flatten_fanciblock_settings ($fanciblock['settings']);
-      dpm('hu');
     }
     $form = fanciblock_edit_box('edit', $delta, $settings);
   }
@@ -253,7 +286,7 @@ function fanciblock_block_save($delta, &$edit = array()) {
     $default_box = array(
       'fanciblock_name' => $edit['fanciblock_name'], 
       'boxid' => '', 
-      'box_title' => '', 
+      'box_title' => $edit['fanciblock_title'], 
       'weight' => 0, 
       'box_content' => array('value' => 'Hello!'),
       'icon_link' => '',
@@ -274,7 +307,6 @@ function fanciblock_block_save($delta, &$edit = array()) {
     // Check and see if this block's settings already exist. Theyre saved in
     // config, keyed by the block's unique name (fanciblock_name).
     $settings = $config->get($edit['fanciblock_name']);
-dpm($edit);
     // If we dont find the settings, this is a new block being built, so
     // build and save a default box for each grid.
     if(!$settings) {
@@ -313,19 +345,21 @@ dpm($edit);
  *   - box_content: The box content.
  */
 function fanciblock_box_save($settings) {
-  dpm($settings);
-  // dpm($fanciblock_name);
   config_set('fanciblock.settings', $settings['settings']['fanciblock_name'], $settings);
 }
 
+/**
+ * Create a fanciblock box with default values.
+ */
 function _fanciblock_add_default_boxes($number, $default_box, $delta) {  
   $boxes = array();
+  $title = $default_box['box_title'];
   $i = 1;
   while($i <= $number) {
     $id = uniqid();
     // Set the box title.
     $default_box['boxid'] = $i . $id;
-    $default_box['box_title'] = $default_box['fanciblock_name'] . $i;
+    $default_box['box_title'] = $title . ' ' . $i;
     $default_box['fanciblock_type'] = (string) $delta;
     $boxes[$i . $id] = $default_box;
     $i++;
@@ -339,7 +373,7 @@ function _fanciblock_add_default_boxes($number, $default_box, $delta) {
 function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
-    dpm($fanciblock);
+
     // Block settings stay in Layout even if the module is unintalled, and cause
     // white-screen on view. So dont show anything unless we find a config file.
     if($fanciblock) {
@@ -347,7 +381,7 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
       // THis adds the a fake link in the fanciblock menu so that we can identify it.
       // See hook_menu for details.
       $data['content'] =  array(
-        '#markup' => fanciblock_load_fanciblocks($delta, $fanciblock['settings']),
+        '#markup' => fanciblock_build_fanciblocks($delta, $fanciblock['settings']),
         '#contextual_links' => array(
           'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
         ),
@@ -359,16 +393,17 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
 
 
 /**
- * Load fanciblock and all contained boxes.
+ * Build a fanciblock and all contained boxes and load necessary CSS and JS.
  *
  * @return
- *   Array of fanciblock with contained boxes data.
+ *   Array of fanciblocks with contained boxes data.
  */
-function fanciblock_load_fanciblocks($delta, $settings) {
+function fanciblock_build_fanciblocks($delta, $settings) {
   // Load the config file.
   $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
   $boxes = $fanciblock['boxes'];
-  dpm($boxes);
+  backdrop_sort($boxes, array('weight' => SORT_NUMERIC));
+  
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'); // add library fontawesome.css
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.css'); // add css
   backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
@@ -383,6 +418,10 @@ function fanciblock_load_fanciblocks($delta, $settings) {
   }
 }
 
+
+/**
+ * Flattens the settings array to remove parent keys.
+ */
 function _flatten_fanciblock_settings ($settings = array()) {
   $results = &backdrop_static('fanciblock_flatten', array());
   foreach($settings as $key => $setting) {
@@ -403,20 +442,6 @@ function _fanciblock_validate_positive_integer($element, &$form_state) {
   $value = $element['#value'];
   if (!is_numeric($value) || intval($value) != $value || $value < 0) {
     form_error($element, t('%name must be a positive integer.', array('%name' => $element['#title'])));
-  }
-}
-/**
- * Validate a form element that should have an integer value.
- */
-function _fanciblock_validate_name($element, &$form_state) {
-  $name = $element['#value'];
-
-  if (!preg_match('/^[a-zA-Z0-9_]+$/u', $name)) {
-    form_error($element, t('%name must only contain alphanumeric characters or underscores.', array('%name' => $element['#title'])));
-  }
- $keys = array_keys(config_get('fanciblock.settings'));
-  if (in_array($name, $keys)) {
-    form_error($element, t('%name must be unique.', array('%name' => $element['#title'])));
   }
 }
 
