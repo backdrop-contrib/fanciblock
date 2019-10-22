@@ -70,7 +70,7 @@ function template_preprocess_fanciblock_content(&$variables) {
       }
     
       // Create icon style sentence by joining icon color and background border.
-      $variables['icon_style']	= 'style="' . $variables['icon_bg_color'] . $variables['icon_border'] . '"'; 
+      $variables['icon_style']	= 'style="' . $variables['icon_bg_color'] . $variables['icon_border']; 
     }
 
     // Build the box background.
@@ -139,8 +139,7 @@ function template_preprocess_fanciblock_content(&$variables) {
         'class' => $item['fontawesome_icon'], 
         'size' => $variables['icon_size'], 
         'looks' => $variables['icon_looks'], 
-        'style' => $variables['icon_style'],
-        'color' => 'color:'.$item['fontawesome_icon_color']
+        'style' => $variables['icon_style'] . 'color:' . $item['fontawesome_icon_color'] . ';"',
       ));
     }
     
