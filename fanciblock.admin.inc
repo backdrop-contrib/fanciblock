@@ -185,10 +185,8 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     ),
   );
   $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-container']['icon-bg-color'] = array(
-    '#type' => 'textfield',
+    '#type' => 'color',
     '#title' => t('Icon Background Color'),
-    '#size' => 10,
-    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['icon-bg-color']) ? $fanciblock['icon-bg-color'] : '#333333',
@@ -241,11 +239,9 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#default_value' => isset($fanciblock['icon-border-style']) ? $fanciblock['icon-border-style'] : 1,
   );
   $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-color'] = array(
-    '#type' => 'textfield',
+    '#type' => 'color',
     '#title' => t('Icon Custom Border Color'),
     '#title_display' => 'invisible',
-    '#size' => 10,
-    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['icon-border-color']) ? $fanciblock['icon-border-color'] : '#efefef',
@@ -271,11 +267,9 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     ),
   );
   $form['appearance']['box-bg-color-container']['box-bg-color'] = array(
-    '#type' => 'textfield',
+    '#type' => 'color',
     '#title' => t('Box Custom Background Color'),
     '#title_display' => 'invisible',
-    '#size' => 10,
-    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-bg-color']) ? $fanciblock['box-bg-color'] : '#efefef',
@@ -318,11 +312,9 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#default_value' => isset($fanciblock['box-border-style']) ? $fanciblock['box-border-style'] : 1,
   );
   $form['appearance']['box-border-container']['box-border-color'] = array(
-    '#type' => 'textfield',
+    '#type' => 'color',
     '#title' => t('Box Custom Border Color'),
     '#title_display' => 'invisible',
-    '#size' => 10,
-    '#maxlength' => 8,
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-border-color']) ? $fanciblock['box-border-color'] : '#efefef',
