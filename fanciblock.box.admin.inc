@@ -339,5 +339,6 @@ function fanciblock_box_fontawesome_parser($path) {
       }
     }
   }
+  asort($result);
   return $result;
 }
