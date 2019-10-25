@@ -289,9 +289,9 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
  * Menu callback; check access and get a confirm form for deletion of a box.
  */
 function fanciblock_box_delete_box($form, &$form_state, $fanciblock, $boxid, $type) {
-  $form['#fanciblock_name'] = $fanciblock['fanciblock_name'];
+  $form['#fanciblock_name'] = $fanciblock['settings']['fanciblock_name'];
   $form['#boxid'] = $boxid;
-  return confirm_form($form, t('Are you sure you want to delete the box %box?', array('%box' => $fanciblock_name)), 'admin/config/media/fanciblocks/' . $fanciblock_name . '/' . $boxid . '/edit');
+  return confirm_form($form, t('Are you sure you want to delete the box %box?', array('%box' => $fanciblock['boxes'][$form['#boxid']]['box_title'])), 'admin/config/media/fanciblocks/' . $form['#fanciblock_name'] . '/' . $boxid . '/edit');
 }
 
 /**
@@ -305,11 +305,11 @@ function fanciblock_box_delete_box_submit($form, &$form_state) {
   $grid = $fanciblock['settings']['grid']['grid']--;
   // Do the delete.
   unset($fanciblock['boxes'][$form['#boxid']]);
-  config_set('fanciblock.settings', $form['#fanciblock_name'], $fanciblock); 
-
+  fanciblock_box_save($fanciblock);
   $t_args = array('%title' => $deleted);
   backdrop_set_message(t('The fanciblock box %title has been deleted.', $t_args));
   watchdog('fanciblock', 'Deleted fanciblock box %title.', $t_args, WATCHDOG_NOTICE);
+  backdrop_goto('admin/config/media/fanciblocks/' . $form['#fanciblock_name']);
 }
 
 /**
