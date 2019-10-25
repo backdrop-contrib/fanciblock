@@ -77,7 +77,7 @@ function _fanciicon_fontawesome_icon_build($box) {
  * @ingroup themeable
  */
 function theme_fanciblock_fontawesome_icon_build($variables) {
-  $output = '<i class="fa '.$variables['class'].' '.$variables['size'].' '.$variables['looks'].'"' .$variables['style'].$variables['color'].'></i>';
+  $output = '<i class="fa '.$variables['class'].' '.$variables['size'].' '.$variables['looks'].'"' .$variables['style'].'></i>';
   return $output;
 }
 
