@@ -51,6 +51,7 @@ CURRENT MAINTAINERS
 ---------------    
 
 - Andy Shillingford (https://github.com/docwilmot/)
+- Tim Erickson (https://github.com/stpaultim/)
 
 CREDITS   
 --------------- 
