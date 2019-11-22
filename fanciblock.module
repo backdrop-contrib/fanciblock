@@ -117,6 +117,7 @@ function fanciblock_menu() {
     'page callback' => 'fanciblock_box_add_box',
     'page arguments' => array(4),
     'access arguments' => array('administer fanciblock'),
+    'type' => MENU_LOCAL_ACTION,
     'file' => 'fanciblock.box.admin.inc',
   );
   //Edit box.

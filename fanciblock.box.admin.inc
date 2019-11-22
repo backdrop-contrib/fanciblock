@@ -291,7 +291,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
   }
   $fanciblock['boxes'][$box['boxid']] = $box;
   fanciblock_box_save($fanciblock);
-  $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name']
+  $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
   backdrop_set_message(t('Your configuration has been saved.'));
 }
 
