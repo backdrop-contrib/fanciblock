@@ -6,7 +6,9 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock) {
   $form['fanciblock_box']['#tree'] = TRUE;
   
   $boxes = $fanciblock['boxes'];
-  backdrop_sort($boxes, array('weight' => SORT_NUMERIC));
+  if (!empty($boxes)) {
+    backdrop_sort($boxes, array('weight' => SORT_NUMERIC));
+  }
   
   $form['boxes'] = array(
     '#type' => 'value',
@@ -49,8 +51,8 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock) {
     );
   }
   else {
-    $form['#empty_text'] = t('There are no box yet. <a href="@link">Add box</a>.', 
-    array('@link' => url('admin/config/media/fanciblocks/manage/'. $fanciblock_name .'/add')));
+    $form['#empty_text'] = t('There are no boxes yet. <a href="@link">Add a box</a>.', 
+    array('@link' => url('admin/config/media/fanciblocks/'. $fanciblock['settings']['fanciblock_name'] .'/add-box')));
   }
   return $form;
 }
@@ -148,7 +150,14 @@ function theme_fanciblock_box_overview_form($variables) {
 /**
  * Menu callback; Build the fanciblock box editing form.
  */
-function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid, $type) {
+function fanciblock_box_add_box($fanciblock) {
+  return backdrop_get_form('fanciblock_box_edit_box', $fanciblock);
+}
+
+/**
+ * Menu callback; Build the fanciblock box editing form.
+ */
+function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL, $type = 'edit') {
   $fanciblock_boxes = $fanciblock['boxes'];
   $box = $fanciblock_boxes[$boxid];
 
@@ -158,11 +167,11 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid, $type
   );
   $form['fanciblock_name'] = array(
     '#type' => 'hidden',
-    '#value' => $box['fanciblock_name'],
+    '#value' => $fanciblock['settings']['fanciblock_name'],
   );
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
-    '#value' => $box['fanciblock_type'],
+    '#value' => $fanciblock['settings']['fanciblock_type'],
   );
   $form['fanciblock'] = array(
     '#type' => 'value',
@@ -171,7 +180,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid, $type
   $form['box_title'] = array(
     '#type' => 'textfield',
     '#title' => t('Box title'),
-    '#default_value' => $box['box_title'],
+    '#default_value' => isset($box['box_title']) ? $box['box_title'] : '',
     '#description' => t('The human-readable name of this box'),
     '#required' => TRUE,
   );
@@ -179,36 +188,36 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid, $type
     '#type' => 'weight',
     '#title' => t('Weight'),
     '#delta' => 50,
-    '#default_value' => $box['weight'],
-    '#description' => t('Optional. Box are displayed in ascending order by weight.'),
+    '#default_value' => isset($box['weight']) ? $box['weight'] : '',
+    '#description' => t('Optional. Boxes are displayed in ascending order by weight.'),
   );
   $form['box_content'] = array(
     '#type' => 'text_format',
     '#format' => 'filtered_html',
     '#title' => t('Box Content'),
-    '#default_value' => $box['box_content']['value'],
+    '#default_value' => isset($box['box_content']['value']) ? $box['box_content']['value'] : '',
   );
-  if($box['fanciblock_type'] == 'fanciblock') {
+  if($fanciblock['settings']['fanciblock_type'] == 'fanciblock') {
     $form['fanciblock_uri'] = array(
       '#title' => t('Image'),
       '#type' => 'managed_file',
       '#description' => t('The uploaded image will be displayed on this page using the image style choosen below.'),
-      '#default_value' => $box['fanciblock_fid'],
+      '#default_value' => isset($box['fanciblock_fid']) ? $box['fanciblock_fid'] : NULL,
       '#upload_location' => 'public://fanciblock_images/',
     );
   }
-  elseif($box['fanciblock_type'] == 'fanciicon') {
+  elseif($fanciblock['settings']['fanciblock_type'] == 'fanciicon') {
     $form['fontawesome_icon'] = array(
       '#type' => 'select',
       '#title' => t('Font Awesome icon'),
       '#options' => fanciblock_box_fontawesome_parser(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'),
-      '#default_value' => $box['fontawesome_icon'],
+      '#default_value' => isset($box['fontawesome_icon']) ? $box['fontawesome_icon'] : '',
       '#description' => t('Please select font awesome icon. For more info see: <a href="http://fortawesome.github.io/Font-Awesome/cheatsheet/" target="_blank">Font Awesome Cheatsheet</a>.'),
     );
     $form['fontawesome_icon_color'] = array(
       '#type' => 'textfield',
       '#title' => t('Font Awesome icon color'),
-      '#default_value' => $box['fontawesome_icon_color'],
+      '#default_value' => isset($box['fontawesome_icon_color']) ? $box['fontawesome_icon_color'] : '',
       '#description' => t('Please select icon color.'),
       '#element_validate' => array('_fanciblock_validate_color_value'),
     );
@@ -216,7 +225,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid, $type
   $form['icon_link'] = array(
     '#type' => 'textfield',
     '#title' => t('Icon Link'),
-    '#default_value' => $box['icon_link'],
+    '#default_value' => isset($box['icon_link']) ? $box['icon_link'] : '',
     '#description' => t('Optional path to which the icon or image will be linked.'),
   );
   $form['actions'] = array('#type' => 'actions');
@@ -255,7 +264,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     'weight' => $form_state['values']['weight'],
     'box_content' => $form_state['values']['box_content'],
     'icon_link' => $form_state['values']['icon_link'],
-    'boxid' => $form_state['values']['boxid'],
+    'boxid' => $form_state['values']['boxid'] ? $form_state['values']['boxid'] : uniqid(),
     'fanciblock_type' => $form_state['values']['fanciblock_type'],
   );
   // Save type-specific values. Start with fanciblock.
@@ -280,8 +289,9 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
-  $fanciblock['boxes'][$form_state['values']['boxid']] = $box;
+  $fanciblock['boxes'][$box['boxid']] = $box;
   fanciblock_box_save($fanciblock);
+  $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
   backdrop_set_message(t('Your configuration has been saved.'));
 }
 
