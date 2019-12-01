@@ -94,15 +94,59 @@ function fanciblock_library_info() {
  * Implements hook_menu().
  */
 function fanciblock_menu() {
-  //List box.
-  $items['admin/config/media/fanciblocks'] = array(
-    'title' => 'List all Fanciblocks',
+  //List blocks.
+  $items['admin/structure/fanciblocks'] = array(
+    'title' => 'Fanciblocks',
     'page callback' => 'fanciblock_overview_page',
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.admin.inc',
   );
-  //List box.
-  $items['admin/config/media/fanciblocks/%fanciblock'] = array(
+  $items['admin/structure/fanciblocks/list'] = array(
+    'title' => 'List fanciblocks',
+    'type' => MENU_DEFAULT_LOCAL_TASK,
+    'weight' => -10,
+    'file' => 'fanciblock.admin.inc',
+  );
+  //Add block.
+  $items['admin/structure/fanciblocks/add-block/fanciicon'] = array(
+    'title' => 'Add icon block',
+    'page callback' => 'fanciblock_box_add_block',
+    'page arguments' => array(4),
+    'access arguments' => array('administer fanciblock'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'fanciblock.admin.inc',
+  );
+  //Add block.
+  $items['admin/structure/fanciblocks/add-block/fanciblock'] = array(
+    'title' => 'Add image block',
+    'page callback' => 'fanciblock_box_add_block',
+    'page arguments' => array(4),
+    'access arguments' => array('administer fanciblock'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'fanciblock.admin.inc',
+  );
+  // Edit block.
+  $items['admin/structure/fanciblocks/%fanciblock/edit'] = array(
+    'title' => 'List Box',
+    'title callback' => 'fanciblock_title_callback',
+    'title arguments' => array(4),
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('fanciblock_box_overview_form', 4),
+    'access arguments' => array('administer fanciblock'),
+    'file' => 'fanciblock.admin.inc',
+  );
+  // Delete block.
+  $items['admin/structure/fanciblocks/%fanciblock/delete'] = array(
+    'title' => 'List Box',
+    'title callback' => 'fanciblock_title_callback',
+    'title arguments' => array(4),
+    'page callback' => 'backdrop_get_form',
+    'page arguments' => array('fanciblock_box_overview_form', 4),
+    'access arguments' => array('administer fanciblock'),
+    'file' => 'fanciblock.admin.inc',
+  );
+  // List boxes.
+  $items['admin/structure/fanciblocks/%fanciblock'] = array(
     'title' => 'List Box',
     'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(4),
@@ -111,8 +155,8 @@ function fanciblock_menu() {
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
-  //Add box.
-  $items['admin/config/media/fanciblocks/%fanciblock/add-box'] = array(
+  // Add box.
+  $items['admin/structure/fanciblocks/%fanciblock/add-box'] = array(
     'title' => 'Add box',
     'page callback' => 'fanciblock_box_add_box',
     'page arguments' => array(4),
@@ -120,8 +164,8 @@ function fanciblock_menu() {
     'type' => MENU_LOCAL_ACTION,
     'file' => 'fanciblock.box.admin.inc',
   );
-  //Edit box.
-  $items['admin/config/media/fanciblocks/%fanciblock/%/edit'] = array(
+  // Edit box.
+  $items['admin/structure/fanciblocks/%fanciblock/%/edit'] = array(
     'title' => 'Edit box',
     'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(4),
@@ -130,8 +174,8 @@ function fanciblock_menu() {
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
-  //Delete box.
-  $items['admin/config/media/fanciblocks/%fanciblock/%/delete'] = array(
+  // Delete box.
+  $items['admin/structure/fanciblocks/%fanciblock/%/delete'] = array(
     'title' => 'Delete box',
     'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(4),
@@ -194,13 +238,13 @@ function fanciblock_menu_contextual_links_alter(&$links, $router_item, $root_pat
       foreach($config as $box) {
         $links['fb' . $box['boxid']] = array(
           'title' => 'Edit ' . $box['box_title'],
-          'href' => 'admin/config/media/fanciblocks/' . $box['fanciblock_name'] . '/' . $box['boxid'] . '/edit',
+          'href' => 'admin/structure/fanciblocks/' . $box['fanciblock_name'] . '/' . $box['boxid'] . '/edit',
           'localized_options' => array(),
         );
       }
       $links['ls' . $fanciblock] = array(
         'title' => 'Re-order',
-        'href' => 'admin/config/media/fanciblocks/' . $fanciblock,
+        'href' => 'admin/structure/fanciblocks/' . $fanciblock,
         'localized_options' => array(),
       );
     }

@@ -47,8 +47,16 @@ function theme_fanciblock_admin_overview($variables) {
 /**
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
-function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
-  drupal_add_css(drupal_get_path('module', 'fanciblock') . '/css/fanciblock_admin.css');
+function fanciblock_box_add_block($type) {
+  return backdrop_get_form('fanciblock_edit_box', $type);
+}
+
+/**
+ * Menu callback; Build the form that handles the adding/editing of a fanciblock.
+ */
+function fanciblock_edit_box($form, &$form_state, $type, $fanciblock = array()) {
+  form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
+  backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock_admin.css');
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock += array(
@@ -56,9 +64,10 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     'title' => '',
     'optionset' => '',
   );
+  $form = array();
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
-    '#value' => $delta,
+    '#value' => $type,
   );
 
   $form['fanciblock_title'] = array(
@@ -76,7 +85,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#description' => t('A unique name for this Fanciblock. It must only contain lowercase letters, numbers and underscores.'),
     '#machine_name' => array(
       'exists' => 'fanciblock_load',
-      'source' => array('block_settings', 'fanciblock_title'),
+      'source' => array('fanciblock_title'),
     ),
   );
 
@@ -104,18 +113,8 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     ),
     '#default_value' => isset($fanciblock['icon-position']) ? $fanciblock['icon-position'] : 'top',
   );
-  $form['appearance']['icon-style'] = array(
-    '#type' => 'select',
-    '#title' => t('Icon Style'),
-    '#options' => array(
-      "none" => t('None'),
-      "circle" => t('Circle'),
-      "square"  => t('Square'),
-    ),
-    '#default_value' => isset($fanciblock['icon-style']) ? $fanciblock['icon-style'] : 'none',
-  );
   
-  if($delta == 'fanciblock') {
+  if($type == 'fanciblock') {
   /*----------- icon size -----------*/
     $form['appearance']['icon-size'] = array(
       '#type' => 'select',
@@ -132,7 +131,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     );
   /*----------- end icon size -----------*/
   }
-  elseif($delta == 'fanciicon') {
+  elseif($type == 'fanciicon') {
   /*----------- icon size -----------*/
     $form['appearance']['icon-size'] = array(
       '#type' => 'select',
@@ -148,7 +147,6 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     );
   /*----------- end icon size -----------*/
   }
-/*----------- Box padding -----------*/
   $form['appearance']['box-padding'] = array(
     '#type' => 'textfield',
     '#title' => t('Box Padding'),
@@ -156,7 +154,16 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#maxlength' => 2,
     '#default_value' => isset($fanciblock['box-padding']) ? $fanciblock['box-padding'] : '20',
   );
-/*----------- end Box padding -----------*/
+  $form['appearance']['icon-style'] = array(
+    '#type' => 'select',
+    '#title' => t('Icon Style'),
+    '#options' => array(
+      "none" => t('None'),
+      "circle" => t('Circle'),
+      "square"  => t('Square'),
+    ),
+    '#default_value' => isset($fanciblock['icon-style']) ? $fanciblock['icon-style'] : 'none',
+  );
 
 /*----------- icon bg color -----------*/
   $form['appearance']['icon-bg-color-wrapper'] = array(
@@ -164,25 +171,15 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('Icon Background Color'),
     '#states' => array(
       'invisible' => array(
-        ':input[name="block_settings[appearance][icon-style]"]' => array('value' => 'none'),
+        ':input[name="icon-style"]' => array('value' => 'none'),
       ),
     ),
-  );
-  $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-status'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Icon Background Color'),
-    '#default_value' => isset($fanciblock['icon-bg-color-status']) ? $fanciblock['icon-bg-color-status'] : false,
   );
   $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Icon Background Color'), 
     '#title_display' => 'invisible',
     '#attributes' => array('class' => array('container-inline')),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="block_settings[appearance][icon-bg-color-wrapper][icon-bg-color-status]"]' => array('checked' => TRUE),
-      ),
-    ),
   );
   $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-container']['icon-bg-color'] = array(
     '#type' => 'textfield',
@@ -201,32 +198,22 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#title' => t('Icon Background Color'),
     '#states' => array(
       'invisible' => array(
-        ':input[name="block_settings[appearance][icon-style]"]' => array('value' => 'none'),
+        ':input[name="icon-style"]' => array('value' => 'none'),
       ),
     ),
-  );
-  $form['appearance']['icon-border-wrapper']['icon-border-status'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Icon Border'),
-    '#default_value' => isset($fanciblock['icon-border']) ? $fanciblock['icon-border'] : false,
   );
   $form['appearance']['icon-border-wrapper']['icon-border-container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Icon Border Settings'), 
     '#title_display' => 'invisible',
     '#attributes' => array('class' => array('container-inline')),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="block_settings[appearance][icon-border-wrapper][icon-border-status]"]' => array('checked' => TRUE),
-      ),
-    ),
   );
   $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-width'] = array(
     '#type' => 'select',
     '#title' => t('Icon Border Width'),
     '#title_display' => 'invisible',
-    '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
-    '#default_value' => isset($fanciblock['icon-border-width']) ? $fanciblock['icon-border-width'] : 1,
+    '#options' => array(0 => t('No icon border'), 1, 2, 3, 4, 5, 6, 7, 8),
+    '#default_value' => isset($fanciblock['icon-border-width']) ? $fanciblock['icon-border-width'] : 0,
   );
   $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-style'] = array(
     '#type' => 'select',
@@ -239,6 +226,11 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       "double"	=> t('Double'),
     ),
     '#default_value' => isset($fanciblock['icon-border-style']) ? $fanciblock['icon-border-style'] : 1,
+    '#states' => array(
+      'invisible' => array(
+        ':input[name="icon-border-width"]' => array('value' => 0),
+      ),
+    ),
   );
   $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-color'] = array(
     '#type' => 'textfield',
@@ -249,26 +241,21 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['icon-border-color']) ? $fanciblock['icon-border-color'] : '#efefef',
+    '#states' => array(
+      'invisible' => array(
+        ':input[name="icon-border-width"]' => array('value' => 0),
+      ),
+    ),
   );
 /*----------- end icon border -----------*/
 
 
 /*----------- Box background -----------*/
-  $form['appearance']['box-bg-color-status'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Box Background Color'),
-    '#default_value' => isset($fanciblock['box-bg-color-status']) ? $fanciblock['box-bg-color-status'] : false,
-  );
   $form['appearance']['box-bg-color-container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Box Background Color'),
     '#title_display' => 'invisible',
     '#attributes' => array('class' => array('container-inline')),
-    '#states' => array(
-      'visible' => array(
-        ':input[name="block_settings[appearance][box-bg-color-status]"]' => array('checked' => TRUE),
-      ),
-    ),
   );
   $form['appearance']['box-bg-color-container']['box-bg-color'] = array(
     '#type' => 'textfield',
@@ -283,27 +270,17 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
 /*----------- end Box background -----------*/
 
 /*----------- box border -----------*/
-  $form['appearance']['box-border-status'] = array(
-    '#type' => 'checkbox',
-    '#title' => t('Box Border'),
-    '#default_value' => isset($fanciblock['box-border-status']) ? $fanciblock['box-border-status'] : false,
-  );
   $form['appearance']['box-border-container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Box Border'), 
     '#attributes' => array('class' => array('container-inline')), 
-    '#states' => array(
-      'visible' => array(
-        ':input[name="block_settings[appearance][box-border-status]"]' => array('checked' => TRUE),
-      ),
-    ),
   );
   $form['appearance']['box-border-container']['box-border-width'] = array(
     '#type' => 'select',
     '#title' => t('Box Border Width'),
     '#title_display' => 'invisible',
-    '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
-    '#default_value' => isset($fanciblock['box-border-width']) ? $fanciblock['box-border-width'] : 1,
+    '#options' => array(0 => t('No icon border'), 1, 2, 3, 4, 5, 6, 7, 8),
+    '#default_value' => isset($fanciblock['box-border-width']) ? $fanciblock['box-border-width'] : 0,
   );
   $form['appearance']['box-border-container']['box-border-style'] = array(
     '#type' => 'select',
@@ -316,6 +293,11 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       "double"	=> t('Double'),
     ),
     '#default_value' => isset($fanciblock['box-border-style']) ? $fanciblock['box-border-style'] : 1,
+    '#states' => array(
+      'invisible' => array(
+        ':input[name="box-border-width"]' => array('value' => 0),
+      ),
+    ),
   );
   $form['appearance']['box-border-container']['box-border-color'] = array(
     '#type' => 'textfield',
@@ -326,8 +308,92 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
     '#default_value' => isset($fanciblock['box-border-color']) ? $fanciblock['box-border-color'] : '#efefef',
+    '#states' => array(
+      'invisible' => array(
+        ':input[name="box-border-width"]' => array('value' => 0),
+      ),
+    ),
   );
 /*----------- end box border -----------*/
 
+  $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Save'),
+    '#submit' => array('fanciblock_edit_box_submit'),
+  );
+  $form['actions']['delete'] = array(
+    '#type' => 'submit',
+    '#value' => t('Delete'),
+    '#submit' => array('fanciblock_box_delete_box_submit_call'),
+  );
+
   return $form;
+}
+
+
+/**
+ *  Saves a block (fanciblock).
+ *  
+ *  @param $type The type of block being saved.
+ */
+function fanciblock_edit_box_submit($form, &$form_state) {
+  $type = $form_state['values']['fanciblock_type'];
+  form_state_values_clean($form_state);
+  $values = $form_state['values'];
+  dpm($values);
+  if ($type == 'fanciblock' || $type == 'fanciicon') {
+    $config = config('fanciblock.settings');
+    
+    // Set up defaults.
+    $default_fid = $config->get('default_fid');
+    $default_fanciblock_uri = $config->get('default_fanciblock_uri');
+    $default_box = array(
+      'fanciblock_name' => $values['fanciblock_name'], 
+      'boxid' => '', 
+      'box_title' => $values['fanciblock_title'], 
+      'weight' => 0, 
+      'box_content' => array('value' => 'Hello!'),
+      'icon_link' => '',
+    );
+    if ($type == 'fanciblock') {
+      $default_box += array(
+        'fanciblock_fid' => $default_fid, 
+        'fanciblock_uri' => $default_fanciblock_uri, 
+      );
+    }
+    elseif($type == 'fanciicon') {
+      $default_box += array(
+        'fontawesome_icon' => 'fa-tablet',
+        'fontawesome_icon_color' => '#333333',
+      );
+    }
+    
+    // Check and see if this block's settings already exist. Theyre saved in
+    // config, keyed by the block's unique name (fanciblock_name).
+    $settings = $config->get($values['fanciblock_name']);
+    // If we dont find the settings, this is a new block being built, so
+    // build and save a default box for each grid.
+    if(!$settings) {
+      $boxes = _fanciblock_add_default_boxes($values['grid'], $default_box, $type);
+      $settings['boxes'] = $boxes;
+      //fanciblock_box_save($values, $boxes);
+    }
+    // If we are adding boxes, Grid number will be more than the number of 
+    // settings.
+    elseif($values['grid']['grid'] > count($settings['boxes'])) {
+      $adding = $values['grid']['grid'] - count($settings);
+      $boxes = _fanciblock_add_default_boxes($adding, $default_box, $type);
+      $settings['boxes'] += $boxes;
+      
+      //fanciblock_box_save($values, $settings);
+    }
+    // Theres no safe way to decrease the number of boxes, so we dont allow that.
+    elseif($values['grid']['grid'] < count($settings)) {
+      form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
+    }
+    $settings['settings'] = $values;
+    dpm($settings);
+    // fanciblock_box_save($settings);
+  }
 }
