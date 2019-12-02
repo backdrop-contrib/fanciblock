@@ -216,10 +216,24 @@ function fanciblock_title_callback($fanciblock) {
 /**
  * Loads a Fanciblock.
  */
-function fanciblock_load($fanciblock_name) {
-  $config = config('fanciblock.settings');
-  $fanciblock = $config->get($fanciblock_name);
-  return $fanciblock;
+function fanciblock_load_all() {
+  $result = config_get('fanciblock.settings');
+  foreach ($result as $info) {
+    if (is_array($info)) {
+      $fanciblocks[$info['settings']['fanciblock_name']] = $info;
+    }
+  }
+
+  return $fanciblocks;
+}
+
+/**
+ * Loads a Fanciblock.
+ */
+function fanciblock_load($fanciblock_name = NULL) {
+  $fanciblocks = fanciblock_load_all();
+
+  return $fanciblocks[$fanciblock_name];
 }
 
 /**
@@ -302,6 +316,17 @@ function fanciblock_block_info() {
   
   $blocks['fanciicon']['info'] = t('Fanciblock icon');
   $blocks['fanciicon']['description'] = t('Fanciblock icon');
+  
+  $fanciblocks = fanciblock_load_all();
+  foreach ($fanciblocks as $fanciblock) {
+    $fanciblock_name = $fanciblock['settings']['fanciblock_name'];
+    $fanciblock_title = $fanciblock['settings']['fanciblock_title'];
+    $fanciblock_type = $fanciblock['settings']['fanciblock_type'];
+
+    $blocks[$fanciblock_name]['info'] = t('Fanciblock: ') . $fanciblock_title;
+    $blocks[$fanciblock_name]['description'] = t('Fanciblock ') . $fanciblock_type;
+  }
+
   return $blocks;
 }
 
@@ -424,8 +449,14 @@ function _fanciblock_add_default_boxes($number, $default_box, $delta) {
  * Implements hook_block_view().
  */
 function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
-  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
+  $fanciblocks = fanciblock_load_all();
+  if ($delta == 'fanciblock' || $delta == 'fanciicon' || array_key_exists($delta, $fanciblocks)) {
+    if (isset($settings['fanciblock_name'])) {
+      $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
+    }
+    else {
+      $fanciblock = $fanciblocks[$delta];
+    }
 
     // Block settings stay in Layout even if the module is unintalled, and cause
     // white-screen on view. So dont show anything unless we find a config file.
