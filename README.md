@@ -20,8 +20,8 @@ INSTALLATION
  - Box images can be uploaded or changed
  - Icon colors can be edited individually
  - Box content and titles can be edited
-7. Block boxes are listed and can be re-ordered at 'admin/config/media/fanciblocks/%'
-8. A list of all Fanciblocks can be found at 'admin/config/media/fanciblocks/'
+7. Block boxes are listed and can be re-ordered at 'admin/structure/fanciblocks/%'
+8. A list of all Fanciblocks can be found at 'admin/structure/fanciblocks/'
  - IMPORTANT! Because of the way Layout builder saves blocks, if you configure
    a new block, then click "Add Block" but then do not save the layout, the 
    block settings are still saved in fancibock.settings.json, but the block will

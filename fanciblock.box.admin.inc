@@ -38,8 +38,8 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock) {
         '#delta' => 50,
         '#title-display' => 'invisible',
       ),
-      'edit' => array('#type' => 'link', '#title' => t('edit'), '#href' => "admin/config/media/fanciblocks/" . $box['fanciblock_name'] . "/". $box['boxid'] ."/edit"),
-      'delete' => array('#type' => 'link', '#title' => t('delete'), '#href' => "admin/config/media/fanciblocks/" . $box['fanciblock_name'] . "/". $box['boxid'] ."/delete"),
+      'edit' => array('#type' => 'link', '#title' => t('edit'), '#href' => "admin/structure/fanciblocks/" . $box['fanciblock_name'] . "/". $box['boxid'] ."/edit"),
+      'delete' => array('#type' => 'link', '#title' => t('delete'), '#href' => "admin/structure/fanciblocks/" . $box['fanciblock_name'] . "/". $box['boxid'] ."/delete"),
     );
   }
 
@@ -52,7 +52,7 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock) {
   }
   else {
     $form['#empty_text'] = t('There are no boxes yet. <a href="@link">Add a box</a>.', 
-    array('@link' => url('admin/config/media/fanciblocks/'. $fanciblock['settings']['fanciblock_name'] .'/add-box')));
+    array('@link' => url('admin/structure/fanciblocks/'. $fanciblock['settings']['fanciblock_name'] .'/add-box')));
   }
   return $form;
 }
@@ -246,7 +246,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
  * Submit function for the delete button on the box editing form.
  */
 function fanciblock_box_delete_box_submit_call($form, &$form_state) {
-  $_GET['destination'] = 'admin/config/media/fanciblocks/' . $form_state['values']['fanciblock_name'] . '/' . $form_state['values']['boxid'] . '/delete';
+  $_GET['destination'] = 'admin/structure/fanciblocks/' . $form_state['values']['fanciblock_name'] . '/' . $form_state['values']['boxid'] . '/delete';
 }
 
 /**
@@ -291,7 +291,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
   }
   $fanciblock['boxes'][$box['boxid']] = $box;
   fanciblock_box_save($fanciblock);
-  $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
+  $form_state['redirect'] = 'admin/structure/fanciblocks/' . $box['fanciblock_name'];
   backdrop_set_message(t('Your configuration has been saved.'));
 }
 
@@ -301,7 +301,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
 function fanciblock_box_delete_box($form, &$form_state, $fanciblock, $boxid, $type) {
   $form['#fanciblock_name'] = $fanciblock['settings']['fanciblock_name'];
   $form['#boxid'] = $boxid;
-  return confirm_form($form, t('Are you sure you want to delete the box %box?', array('%box' => $fanciblock['boxes'][$form['#boxid']]['box_title'])), 'admin/config/media/fanciblocks/' . $form['#fanciblock_name'] . '/' . $boxid . '/edit');
+  return confirm_form($form, t('Are you sure you want to delete the box %box?', array('%box' => $fanciblock['boxes'][$form['#boxid']]['box_title'])), 'admin/structure/fanciblocks/' . $form['#fanciblock_name'] . '/' . $boxid . '/edit');
 }
 
 /**
@@ -319,7 +319,7 @@ function fanciblock_box_delete_box_submit($form, &$form_state) {
   $t_args = array('%title' => $deleted);
   backdrop_set_message(t('The fanciblock box %title has been deleted.', $t_args));
   watchdog('fanciblock', 'Deleted fanciblock box %title.', $t_args, WATCHDOG_NOTICE);
-  backdrop_goto('admin/config/media/fanciblocks/' . $form['#fanciblock_name']);
+  backdrop_goto('admin/structure/fanciblocks/' . $form['#fanciblock_name']);
 }
 
 /**

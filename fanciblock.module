@@ -129,9 +129,9 @@ function fanciblock_menu() {
   $items['admin/structure/fanciblocks/%fanciblock/edit'] = array(
     'title' => 'List Box',
     'title callback' => 'fanciblock_title_callback',
-    'title arguments' => array(4),
+    'title arguments' => array(3),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_overview_form', 4),
+    'page arguments' => array('fanciblock_block_edit_form', 3),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.admin.inc',
   );
@@ -139,9 +139,9 @@ function fanciblock_menu() {
   $items['admin/structure/fanciblocks/%fanciblock/delete'] = array(
     'title' => 'List Box',
     'title callback' => 'fanciblock_title_callback',
-    'title arguments' => array(4),
+    'title arguments' => array(3),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_overview_form', 4),
+    'page arguments' => array('fanciblock_box_overview_form', 3),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.admin.inc',
   );
@@ -149,9 +149,9 @@ function fanciblock_menu() {
   $items['admin/structure/fanciblocks/%fanciblock'] = array(
     'title' => 'List Box',
     'title callback' => 'fanciblock_title_callback',
-    'title arguments' => array(4),
+    'title arguments' => array(3),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_overview_form', 4),
+    'page arguments' => array('fanciblock_box_overview_form', 3),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
@@ -159,7 +159,7 @@ function fanciblock_menu() {
   $items['admin/structure/fanciblocks/%fanciblock/add-box'] = array(
     'title' => 'Add box',
     'page callback' => 'fanciblock_box_add_box',
-    'page arguments' => array(4),
+    'page arguments' => array(3),
     'access arguments' => array('administer fanciblock'),
     'type' => MENU_LOCAL_ACTION,
     'file' => 'fanciblock.box.admin.inc',
@@ -168,9 +168,9 @@ function fanciblock_menu() {
   $items['admin/structure/fanciblocks/%fanciblock/%/edit'] = array(
     'title' => 'Edit box',
     'title callback' => 'fanciblock_title_callback',
-    'title arguments' => array(4),
+    'title arguments' => array(3),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_edit_box', 4, 5, 6),
+    'page arguments' => array('fanciblock_box_edit_box', 3, 4, 5),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
@@ -178,9 +178,9 @@ function fanciblock_menu() {
   $items['admin/structure/fanciblocks/%fanciblock/%/delete'] = array(
     'title' => 'Delete box',
     'title callback' => 'fanciblock_title_callback',
-    'title arguments' => array(4),
+    'title arguments' => array(3),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_delete_box', 4, 5, 6),
+    'page arguments' => array('fanciblock_box_delete_box',3, 4, 5),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
@@ -316,7 +316,7 @@ function fanciblock_block_configure($delta = '', $settings = array()) {
       $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
       $settings = _flatten_fanciblock_settings ($fanciblock['settings']);
     }
-    $form = fanciblock_edit_box('edit', $delta, $settings);
+    $form = fanciblock_block_edit_form('edit', $delta, $settings);
   }
   return $form;
 }

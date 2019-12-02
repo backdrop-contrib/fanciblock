@@ -16,8 +16,25 @@ function fanciblock_overview_page() {
     foreach ($result as $key => $fanciblock) {
       if(is_array($fanciblock)) {
         $row = array();
-        $row[] = check_plain($key);
-        $row[] = array('data' => l(t('edit'), 'admin/config/media/fanciblocks/' . $key));
+
+        $links = array();
+          $links['edit'] = array(
+            'title' => t('Edit block'),
+            'href' => 'admin/structure/fanciblocks/' . $key . '/edit',
+          );
+          $links['edit_boxes'] = array(
+            'title' => t('Manage boxes'),
+            'href' => 'admin/structure/fanciblocks/' . $key,
+          );
+
+
+        $operations = array(
+          '#type' => 'dropbutton',
+          '#links' => $links,
+        );
+
+        $row[] = check_plain($fanciblock['settings']['fanciblock_title']);
+        $row[] = backdrop_render($operations);
         $rows[] = $row;
       }
     }
@@ -25,7 +42,7 @@ function fanciblock_overview_page() {
   else {
     $header = array(t('fanciblock Name'), array('data' => t('Operations')));
     $rows = array();
-    $rows[] = array(array('data' => t('There are no fanciblock yet')));
+    $rows[] = array(array('data' => t('There are no fanciblocks yet')));
   }
   return theme('table', array('header' => $header, 'rows' => $rows));
 }
@@ -48,26 +65,23 @@ function theme_fanciblock_admin_overview($variables) {
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
 function fanciblock_box_add_block($type) {
-  return backdrop_get_form('fanciblock_edit_box', $type);
+  return backdrop_get_form('fanciblock_block_edit_form', array(), $type);
 }
 
 /**
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
-function fanciblock_edit_box($form, &$form_state, $type, $fanciblock = array()) {
+function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), $type = NULL) {
   form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock_admin.css');
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
-  $fanciblock += array(
-    'fanciblock_name' => '',
-    'title' => '',
-    'optionset' => '',
-  );
+  $fanciblock = $fanciblock['settings'];
+
   $form = array();
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
-    '#value' => $type,
+    '#value' => $type ? $type : $fanciblock['fanciblock_type'],
   );
 
   $form['fanciblock_title'] = array(
@@ -320,7 +334,7 @@ function fanciblock_edit_box($form, &$form_state, $type, $fanciblock = array()) 
   $form['actions']['submit'] = array(
     '#type' => 'submit',
     '#value' => t('Save'),
-    '#submit' => array('fanciblock_edit_box_submit'),
+    '#submit' => array('fanciblock_block_edit_form_submit'),
   );
   $form['actions']['delete'] = array(
     '#type' => 'submit',
@@ -337,11 +351,11 @@ function fanciblock_edit_box($form, &$form_state, $type, $fanciblock = array()) 
  *  
  *  @param $type The type of block being saved.
  */
-function fanciblock_edit_box_submit($form, &$form_state) {
+function fanciblock_block_edit_form_submit($form, &$form_state) {
   $type = $form_state['values']['fanciblock_type'];
   form_state_values_clean($form_state);
   $values = $form_state['values'];
-  dpm($values);
+
   if ($type == 'fanciblock' || $type == 'fanciicon') {
     $config = config('fanciblock.settings');
     
@@ -393,7 +407,7 @@ function fanciblock_edit_box_submit($form, &$form_state) {
       form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
     }
     $settings['settings'] = $values;
-    dpm($settings);
-    // fanciblock_box_save($settings);
+    fanciblock_box_save($settings);
   }
+  $form_state['redirect'] = 'admin/structure/fanciblocks';
 }
