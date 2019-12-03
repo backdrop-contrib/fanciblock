@@ -30,3 +30,32 @@ function fanciblock_install() {
   $config->set('default_fanciblock_uri', $file->uri);
   $config->save();
 }
+
+/**
+ * Move individual block settings from layouts to the fanciblocks settings file.
+ */
+function fanciblock_update_1000() {
+  $fanciblocks = fanciblock_load_all();
+  $layouts = layout_load_all();
+
+  // We're going to load layout configs directly instead of using Layout API so
+  // that no hooks fire when we change things.
+  $config_names = config_get_names_with_prefix('layout.layout.');
+  foreach ($config_names as $config_file) {
+    $config = config($config_file);
+    $block_data = $config->get();
+    foreach ($block_data['content'] as $uuid => $block) {
+      if ($block['data']['module'] == 'fanciblock' && isset($block['data']['settings']['block_settings']['fanciblock_name'])) {
+        $fanciblock_name = $block['data']['settings']['block_settings']['fanciblock_name'];
+        if (isset($fanciblocks[$fanciblock_name])) {
+          $block_data['content'][$uuid]['plugin'] = 'fanciblock:' . $fanciblock_name;
+          $block_data['content'][$uuid]['data']['delta'] = $fanciblock_name;
+          $block_data['content'][$uuid]['data']['settings']['block_settings'] = array();
+        }
+      }
+    }
+    $config->setData($block_data);
+    $config->save();
+  }
+  layout_reset_caches();
+}
