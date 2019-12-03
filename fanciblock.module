@@ -196,13 +196,6 @@ function fanciblock_menu() {
     'menu_name' => 'fanciblock',
     'access callback' => TRUE,
   );
-  // To use local task menu items, there must be a parent page.
-  $items['fanciblock'] = array(
-    'title' => 'The stub page',
-    'page callback' => 'node',
-    'menu_name' => 'fanciblock',
-    'access callback' => TRUE,
-  );
   return $items;
 }
 
@@ -467,7 +460,7 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
       $data['content'] =  array(
         '#markup' => fanciblock_build_fanciblocks($delta, $fanciblock['settings']),
         '#contextual_links' => array(
-          'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
+          'fanciblock' => array('fanciblock/stub', array($delta)),
         ),
       );
       return $data;
