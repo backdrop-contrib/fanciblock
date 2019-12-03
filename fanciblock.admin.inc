@@ -77,6 +77,7 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock = $fanciblock['settings'];
+  $type = $type ? $type : $fanciblock['fanciblock_type'];
 
   $form = array();
   $form['fanciblock_type'] = array(
@@ -127,7 +128,7 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
     ),
     '#default_value' => isset($fanciblock['icon-position']) ? $fanciblock['icon-position'] : 'top',
   );
-  
+
   if ($type == 'fanciblock') {
   /*----------- icon size -----------*/
     $form['appearance']['icon-size'] = array(
