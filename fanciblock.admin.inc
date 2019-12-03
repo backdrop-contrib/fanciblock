@@ -10,11 +10,11 @@
 function fanciblock_overview_page() {
   $result = config_get('fanciblock.settings');
   
-  if($result) {
+  if ($result) {
     $header = array(t('Fanciblock name'), 'data' => t('Operations'));
     $rows = array();
     foreach ($result as $key => $fanciblock) {
-      if(is_array($fanciblock)) {
+      if (is_array($fanciblock)) {
         $row = array();
 
         $links = array();
@@ -128,7 +128,7 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
     '#default_value' => isset($fanciblock['icon-position']) ? $fanciblock['icon-position'] : 'top',
   );
   
-  if($type == 'fanciblock') {
+  if ($type == 'fanciblock') {
   /*----------- icon size -----------*/
     $form['appearance']['icon-size'] = array(
       '#type' => 'select',
@@ -145,7 +145,7 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
     );
   /*----------- end icon size -----------*/
   }
-  elseif($type == 'fanciicon') {
+  elseif ($type == 'fanciicon') {
   /*----------- icon size -----------*/
     $form['appearance']['icon-size'] = array(
       '#type' => 'select',
@@ -376,7 +376,7 @@ function fanciblock_block_edit_form_submit($form, &$form_state) {
         'fanciblock_uri' => $default_fanciblock_uri, 
       );
     }
-    elseif($type == 'fanciicon') {
+    elseif ($type == 'fanciicon') {
       $default_box += array(
         'fontawesome_icon' => 'fa-tablet',
         'fontawesome_icon_color' => '#333333',
@@ -388,14 +388,14 @@ function fanciblock_block_edit_form_submit($form, &$form_state) {
     $settings = $config->get($values['fanciblock_name']);
     // If we dont find the settings, this is a new block being built, so
     // build and save a default box for each grid.
-    if(!$settings) {
+    if (!$settings) {
       $boxes = _fanciblock_add_default_boxes($values['grid'], $default_box, $type);
       $settings['boxes'] = $boxes;
       //fanciblock_box_save($values, $boxes);
     }
     // If we are adding boxes, Grid number will be more than the number of 
     // settings.
-    elseif($values['grid']['grid'] > count($settings['boxes'])) {
+    elseif ($values['grid']['grid'] > count($settings['boxes'])) {
       $adding = $values['grid']['grid'] - count($settings);
       $boxes = _fanciblock_add_default_boxes($adding, $default_box, $type);
       $settings['boxes'] += $boxes;
@@ -403,7 +403,7 @@ function fanciblock_block_edit_form_submit($form, &$form_state) {
       //fanciblock_box_save($values, $settings);
     }
     // Theres no safe way to decrease the number of boxes, so we dont allow that.
-    elseif($values['grid']['grid'] < count($settings)) {
+    elseif ($values['grid']['grid'] < count($settings)) {
       form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
     }
     $settings['settings'] = $values;

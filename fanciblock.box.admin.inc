@@ -61,10 +61,10 @@ function fanciblock_box_overview_form($form, &$form_state, $fanciblock) {
  * Returns a small icon for list views.
  */
 function _fanciicon_fontawesome_icon_build($box) {
-  if($box['fanciblock_type'] == 'fanciicon') {
+  if ($box['fanciblock_type'] == 'fanciicon') {
     return theme('fanciblock_fontawesome_icon_build', array('class' => $box['fontawesome_icon']));
   }
-  elseif($box['fanciblock_type'] == 'fanciicon') {
+  elseif ($box['fanciblock_type'] == 'fanciicon') {
     return theme('image_style', array('uri' => $box['fanciblock_uri'], 'style_name' => 'tiny_40x40'));
   }
 }
@@ -197,7 +197,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
     '#title' => t('Box Content'),
     '#default_value' => isset($box['box_content']['value']) ? $box['box_content']['value'] : '',
   );
-  if($fanciblock['settings']['fanciblock_type'] == 'fanciblock') {
+  if ($fanciblock['settings']['fanciblock_type'] == 'fanciblock') {
     $form['fanciblock_uri'] = array(
       '#title' => t('Image'),
       '#type' => 'managed_file',
@@ -206,7 +206,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
       '#upload_location' => 'public://fanciblock_images/',
     );
   }
-  elseif($fanciblock['settings']['fanciblock_type'] == 'fanciicon') {
+  elseif ($fanciblock['settings']['fanciblock_type'] == 'fanciicon') {
     $form['fontawesome_icon'] = array(
       '#type' => 'select',
       '#title' => t('Font Awesome icon'),
@@ -268,9 +268,9 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     'fanciblock_type' => $form_state['values']['fanciblock_type'],
   );
   // Save type-specific values. Start with fanciblock.
-  if($form_state['values']['fanciblock_type'] == 'fanciblock') {
+  if ($form_state['values']['fanciblock_type'] == 'fanciblock') {
     // If the image field is set, save the image.
-    if($form_state['values']['fanciblock_uri']) {
+    if ($form_state['values']['fanciblock_uri']) {
       $file = file_load($form_state['values']['fanciblock_uri']);
       $file->status = FILE_STATUS_PERMANENT;
       file_save($file);
@@ -285,7 +285,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     }
   }
   // If its a fanciicon, save the icon value. Its a select so its never empty.
-  elseif($form_state['values']['fanciblock_type'] == 'fanciicon') {
+  elseif ($form_state['values']['fanciblock_type'] == 'fanciicon') {
     $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
@@ -343,7 +343,7 @@ function fanciblock_box_fontawesome_parser($path) {
 
     $selectors = explode(',', trim($selector));
     foreach ($selectors as $strSel) {
-      if(array_key_exists('content', $rules_arr)) {
+      if (array_key_exists('content', $rules_arr)) {
         $strSel = substr($strSel, 1, -7);
         $result[$strSel] = $strSel;
       }
