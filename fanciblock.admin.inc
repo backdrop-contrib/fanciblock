@@ -76,13 +76,14 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock_admin.css');
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
-  $fanciblock = $fanciblock['settings'];
+
+  $fanciblock = !empty($fanciblock['settings']) ? $fanciblock['settings'] : array();
   $type = $type ? $type : $fanciblock['fanciblock_type'];
 
   $form = array();
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
-    '#value' => $type ? $type : $fanciblock['fanciblock_type'],
+    '#value' => $type,
   );
 
   $form['fanciblock_title'] = array(

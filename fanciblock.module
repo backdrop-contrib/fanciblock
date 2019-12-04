@@ -211,6 +211,7 @@ function fanciblock_title_callback($fanciblock) {
  */
 function fanciblock_load_all() {
   $result = config_get('fanciblock.settings');
+  $fanciblocks = array();
   foreach ($result as $info) {
     if (is_array($info)) {
       $fanciblocks[$info['settings']['fanciblock_name']] = $info;
@@ -226,7 +227,7 @@ function fanciblock_load_all() {
 function fanciblock_load($fanciblock_name = NULL) {
   $fanciblocks = fanciblock_load_all();
 
-  return $fanciblocks[$fanciblock_name];
+  return isset($fanciblocks[$fanciblock_name]) ? $fanciblocks[$fanciblock_name] : NULL;
 }
 
 /**
