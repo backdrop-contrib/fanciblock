@@ -75,7 +75,8 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
   form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock_admin.css');
 
-  $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
+  $grid_count = isset($fanciblock['boxes']) ? count($fanciblock['boxes']) : 3;
+
 
   $fanciblock = !empty($fanciblock['settings']) ? $fanciblock['settings'] : array();
   $type = $type ? $type : $fanciblock['fanciblock_type'];
@@ -397,12 +398,12 @@ function fanciblock_block_edit_form_submit($form, &$form_state) {
     // If we are adding boxes, grid number will be more than the number of 
     // settings.
     elseif ($values['grid'] > count($settings['boxes'])) {
-      $adding = $values['grid'] - count($settings);
+      $adding = $values['grid'] - count($settings['boxes']);
       $boxes = _fanciblock_add_default_boxes($adding, $default_box, $type);
       $settings['boxes'] += $boxes;
     }
     // Theres no safe way to decrease the number of boxes, so we dont allow that.
-    elseif ($values['grid'] < count($settings)) {
+    elseif ($values['grid'] < count($settings['boxes'])) {
       form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
     }
     $settings['settings'] = $values;

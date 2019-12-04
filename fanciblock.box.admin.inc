@@ -290,6 +290,8 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
   $fanciblock['boxes'][$box['boxid']] = $box;
+  $fanciblock['settings']['grid'] = count($fanciblock['boxes']);
+
   fanciblock_box_save($fanciblock);
   $form_state['redirect'] = 'admin/structure/fanciblocks/' . $box['fanciblock_name'];
   backdrop_set_message(t('Your configuration has been saved.'));
