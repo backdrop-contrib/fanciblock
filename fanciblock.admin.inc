@@ -11,36 +11,53 @@ function fanciblock_overview_page() {
   $result = config_get('fanciblock.settings');
   
   if ($result) {
-    $header = array(t('Fanciblock name'), 'data' => t('Operations'));
+    module_load_include('inc', 'layout', 'layout.admin');
+    $usage = layout_get_block_usage('fanciblock');
+
+    $header = array(t('Fanciblock name'), t('Usage'), array('data' => t('Operations')));
     $rows = array();
     foreach ($result as $key => $fanciblock) {
       if (is_array($fanciblock)) {
         $row = array();
 
+        if (isset($usage[$key])) {
+          $layout_titles = array();
+          foreach ($usage[$key] as $layout_name => $layout) {
+            foreach ($layout as $region) {
+              foreach ($region as $block) {
+                $layout_titles[$layout_name] = $block->layout_title;
+              }
+            }
+          }
+          $usages = implode(', ', $layout_titles);
+        }
+        else {
+          $usages = t('Not in use');
+        }
+
         $links = array();
-          $links['edit'] = array(
-            'title' => t('Edit block'),
-            'href' => 'admin/structure/fanciblocks/' . $key . '/edit',
-          );
-          $links['edit_boxes'] = array(
-            'title' => t('Manage boxes'),
-            'href' => 'admin/structure/fanciblocks/' . $key,
-          );
-
-
+        $links['edit_boxes'] = array(
+          'title' => t('Manage boxes'),
+          'href' => 'admin/structure/fanciblocks/' . $key,
+        );
+        $links['edit'] = array(
+          'title' => t('Edit block'),
+          'href' => 'admin/structure/fanciblocks/' . $key . '/edit',
+        );
         $operations = array(
           '#type' => 'dropbutton',
           '#links' => $links,
         );
 
         $row[] = check_plain($fanciblock['settings']['fanciblock_title']);
+        $row[] = $usages;
         $row[] = backdrop_render($operations);
         $rows[] = $row;
       }
     }
   }
   else {
-    $header = array(t('fanciblock Name'), array('data' => t('Operations')));
+    $header = array(t('Fanciblock name'), t('Usage'), array('data' => t('Operations')));
     $rows = array();
     $rows[] = array(array('data' => t('There are no fanciblocks yet')));
   }
