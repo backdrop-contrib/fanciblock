@@ -159,7 +159,7 @@ function fanciblock_box_add_box($fanciblock) {
  */
 function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL, $type = 'edit') {
   $fanciblock_boxes = $fanciblock['boxes'];
-  $box = $fanciblock_boxes[$boxid];
+  $box = isset($fanciblock_boxes[$boxid]) ? $fanciblock_boxes[$boxid]: NULL;
 
   $form['boxid'] = array(
     '#type' => 'hidden',
@@ -312,7 +312,7 @@ function fanciblock_box_delete_box_submit($form, &$form_state) {
   // Save the name for backdrop_set_message() and watchdog().
   $deleted = $fanciblock['boxes'][$form['#boxid']]['box_title'];
   // Now we have to reduce the grid number by one since we are deleting a grid.
-  $grid = $fanciblock['settings']['grid']['grid']--;
+  $grid = $fanciblock['settings']['grid']--;
   // Do the delete.
   unset($fanciblock['boxes'][$form['#boxid']]);
   fanciblock_box_save($fanciblock);
