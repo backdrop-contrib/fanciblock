@@ -11,14 +11,26 @@ function fanciblock_overview_page() {
   $result = config_get('fanciblock.settings');
   
   if ($result) {
+    backdrop_add_library('system', 'backdrop.ajax');
     module_load_include('inc', 'layout', 'layout.admin');
     $usage = layout_get_block_usage('fanciblock');
 
-    $header = array(t('Fanciblock name'), t('Usage'), array('data' => t('Operations')));
+    $header = array(t('Fanciblock name'), t('Usage'), t('Preview'), array('data' => t('Operations')));
     $rows = array();
     foreach ($result as $key => $fanciblock) {
       if (is_array($fanciblock)) {
         $row = array();
+
+        $preview = array(
+          '#type' => 'link',
+          '#title' => t('Preview'),
+          '#href' => 'fanciblock/preview/' . $key,
+          '#attributes' => array(
+            'class' => array('use-ajax'),
+            'data-dialog' => 'true',
+            'data-dialog-options' => json_encode(array('width' => 700, 'dialogClass' => 'project-dialog')),
+          ),
+        );
 
         if (isset($usage[$key])) {
           $layout_titles = array();
@@ -51,13 +63,14 @@ function fanciblock_overview_page() {
 
         $row[] = check_plain($fanciblock['settings']['fanciblock_title']);
         $row[] = $usages;
+        $row[] = backdrop_render($preview);
         $row[] = backdrop_render($operations);
         $rows[] = $row;
       }
     }
   }
   else {
-    $header = array(t('Fanciblock name'), t('Usage'), array('data' => t('Operations')));
+    $header = array(t('Fanciblock name'), t('Usage'), t('Preview'), array('data' => t('Operations')));
     $rows = array();
     $rows[] = array(array('data' => t('There are no fanciblocks yet')));
   }

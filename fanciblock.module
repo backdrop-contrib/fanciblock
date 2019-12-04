@@ -196,6 +196,13 @@ function fanciblock_menu() {
     'menu_name' => 'fanciblock',
     'access callback' => TRUE,
   );
+  $items['fanciblock/preview/%fanciblock'] = array(
+    'title' => 'Block preview',
+    'type' => MENU_CALLBACK,
+    'page callback' => 'fanciblock_preview',
+    'page arguments' => array(2),
+    'access arguments' => array('administer fanciblock'),
+  );
   return $items;
 }
 
@@ -384,6 +391,12 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
   }
 }
 
+/**
+ * Preview a Fanciblock.
+ */
+function fanciblock_preview($fanciblock) {
+  return fanciblock_block_view($fanciblock['settings']['fanciblock_name'], $fanciblock['settings']);
+}
 
 /**
  * Build a fanciblock and all contained boxes and load necessary CSS and JS.
