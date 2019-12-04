@@ -52,7 +52,7 @@ function template_preprocess_fanciblock_content(&$variables) {
     // Build icon border and background color
     if ($variables['settings']['icon-style']	!= 'none') {
       // Build background color style.
-      if ($variables['settings']['icon-bg-color-status']	== '') {
+      if ($variables['settings']['icon-bg-color']	== '') {
         $variables['icon_bg_color']	= 'background-color:transparent;';
       } else {
         $variables['icon_bg_color']	= 'background-color:'.$variables['settings']['icon-bg-color'].';';
@@ -60,7 +60,7 @@ function template_preprocess_fanciblock_content(&$variables) {
       
       // If icon border is set, then build the whole sentence by joining the 
       // border width, style and color settings sentences.
-      if ($variables['settings']['icon-border-status']	== 1) {
+      if ($variables['settings']['icon-border-width']	> 0) {
         $variables['icon_border']	= 'border-width:';
         $variables['icon_border']	.= $variables['settings']['icon-border-width'] .'px;';
         $variables['icon_border']	.= 'border-style:';
@@ -74,14 +74,14 @@ function template_preprocess_fanciblock_content(&$variables) {
     }
 
     // Build the box background.
-    if ($variables['settings']['box-bg-color-status'] == '') {
+    if ($variables['settings']['box-bg-color'] == '') {
       $box_bg_color	= 'background-color:transparent;';
     } else {
       $box_bg_color	= 'background-color:'.$variables['settings']['box-bg-color'].';';
     }
     
     // Build the box border.
-    if ($variables['settings']['box-border-status'] == 1) {
+    if ($variables['settings']['box-border-width'] > 0) {
       // Build a border color sentence.
       $box_border	= 'border-width:';
       $box_border	.= $variables['settings']['box-border-width'] .'px;';
