@@ -59,3 +59,36 @@ function fanciblock_update_1000() {
   }
   layout_reset_caches();
 }
+
+/**
+ * Update settings data structure.
+ */
+function fanciblock_update_1001() {
+  $config = config('fanciblock.settings');
+  $data = $config->get();
+  foreach ($data as $key => $item) {
+    if (is_array($item)) {
+      $block = $item;
+      $settings = _flatten_fanciblock_settings($block['settings']);
+      if (empty($settings['icon-bg-color-status'])) {
+        $settings['icon-bg-color'] = '';
+      }
+      if (empty($settings['icon-border-status'])) {
+        $settings['icon-border-width'] = 0;
+      }
+      if (empty($settings['box-bg-color-status'])) {
+        $settings['box-bg-color'] = '';
+      }
+      if (empty($settings['box-border-status'])) {
+        $settings['box-border-width'] = 0;
+      }
+      unset($settings['icon-bg-color-status']);
+      unset($settings['icon-border-status']);
+      unset($settings['box-bg-color-status']);
+      unset($settings['box-border-status']);
+      $data[$key]['settings'] = $settings;
+    }
+  }
+  $config->setData($data);
+  $config->save();
+}
