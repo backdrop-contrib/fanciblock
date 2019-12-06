@@ -257,6 +257,11 @@ function fanciblock_menu_contextual_links_alter(&$links, $router_item, $root_pat
           'localized_options' => array(),
         );
       }
+      $links['edit' . $fanciblock] = array(
+        'title' => 'Configure fanciblock',
+        'href' => 'admin/structure/fanciblocks/' . $fanciblock . '/edit',
+        'localized_options' => array(),
+      );
       $links['ls' . $fanciblock] = array(
         'title' => 'Re-order',
         'href' => 'admin/structure/fanciblocks/' . $fanciblock,
