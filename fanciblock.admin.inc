@@ -56,6 +56,10 @@ function fanciblock_overview_page() {
           'title' => t('Edit block'),
           'href' => 'admin/structure/fanciblocks/' . $key . '/edit',
         );
+        $links['delete'] = array(
+          'title' => t('Delete block'),
+          'href' => 'admin/structure/fanciblocks/' . $key . '/delete',
+        );
         $operations = array(
           '#type' => 'dropbutton',
           '#links' => $links,
@@ -115,6 +119,10 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
     '#value' => $type,
+  );
+  $form['fanciblock'] = array(
+    '#type' => 'hidden',
+    '#value' => $fanciblock,
   );
 
   $form['fanciblock_title'] = array(
@@ -372,12 +380,12 @@ function fanciblock_block_edit_form($form, &$form_state, $fanciblock = array(), 
   $form['actions']['delete'] = array(
     '#type' => 'submit',
     '#value' => t('Delete'),
-    '#submit' => array('fanciblock_box_delete_box_submit_call'),
+    '#access' => !empty($fanciblock),
+    '#submit' => array('fanciblock_block_delete_redirect'),
   );
 
   return $form;
 }
-
 
 /**
  *  Saves a block (fanciblock).
@@ -441,3 +449,42 @@ function fanciblock_block_edit_form_submit($form, &$form_state) {
   }
   $form_state['redirect'] = 'admin/structure/fanciblocks';
 }
+
+/**
+ * Form submission handler for fanciblock_block_edit_form() to delete a
+ * fanciblock.
+ */
+function fanciblock_block_delete_redirect($form, &$form_state) {
+  $fanciblock = $form_state['values']['fanciblock'];
+  dpm($fanciblock);
+  $form_state['redirect'] = 'admin/structure/fanciblocks/' . $fanciblock['fanciblock_name'] . '/delete';
+}
+
+/**
+ * Menu callback; Delete a fanciblock.
+ *
+ * @ingroup forms
+ */
+function fanciblock_block_delete_confirm($form, &$form_state, $fanciblock) {
+  $form_state['fanciblock'] = $fanciblock;
+
+  $question = t('Delete fanciblock @title?', array('@title' => $fanciblock['settings']['fanciblock_title']));
+
+  return confirm_form($form, $question, 'admin/structure/fanciblocks');
+}
+
+
+/**
+ * Form callback; Delete a fanciblock.
+ *
+ * @ingroup forms
+ */
+function fanciblock_block_delete_confirm_submit(&$form, &$form_state) {
+  $fanciblock = $form_state['fanciblock'];
+  $config = config('fanciblock.settings');
+  $config->clear($fanciblock['settings']['fanciblock_name']);
+  $config->save();
+
+  $form_state['redirect'] = 'admin/structure/fanciblocks';
+}
+

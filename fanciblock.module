@@ -141,7 +141,7 @@ function fanciblock_menu() {
     'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(3),
     'page callback' => 'backdrop_get_form',
-    'page arguments' => array('fanciblock_box_overview_form', 3),
+    'page arguments' => array('fanciblock_block_delete_confirm', 3),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.admin.inc',
   );
