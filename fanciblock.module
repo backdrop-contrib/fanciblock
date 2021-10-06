@@ -111,6 +111,15 @@ function fanciblock_menu() {
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
   );
+  //Add box.
+  $items['admin/config/media/fanciblocks/%fanciblock/add-box'] = array(
+    'title' => 'Add box',
+    'page callback' => 'fanciblock_box_add_box',
+    'page arguments' => array(4),
+    'access arguments' => array('administer fanciblock'),
+    'type' => MENU_LOCAL_ACTION,
+    'file' => 'fanciblock.box.admin.inc',
+  );
   //Edit box.
   $items['admin/config/media/fanciblocks/%fanciblock/%/edit'] = array(
     'title' => 'Edit box',
