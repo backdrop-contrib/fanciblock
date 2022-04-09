@@ -215,7 +215,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
       '#description' => t('Please select font awesome icon. For more info see: <a href="http://fortawesome.github.io/Font-Awesome/cheatsheet/" target="_blank">Font Awesome Cheatsheet</a>.'),
     );
     $form['fontawesome_icon_color'] = array(
-      '#type' => 'textfield',
+      '#type' => 'color',
       '#title' => t('Font Awesome icon color'),
       '#default_value' => isset($box['fontawesome_icon_color']) ? $box['fontawesome_icon_color'] : '',
       '#description' => t('Please select icon color.'),
