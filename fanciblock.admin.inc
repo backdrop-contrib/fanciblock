@@ -48,7 +48,7 @@ function theme_fanciblock_admin_overview($variables) {
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
 function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
-  drupal_add_css(drupal_get_path('module', 'fanciblock') . '/css/fanciblock_admin.css');
+  backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock += array(
