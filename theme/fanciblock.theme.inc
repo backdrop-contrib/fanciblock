@@ -69,9 +69,9 @@ function template_preprocess_fanciblock_content(&$variables) {
         $variables['icon_border']	.= $variables['settings']['icon-border-color'].';';
       }
     
-      // Create icon style sentence by joining icon color and background border.
-      $variables['icon_style']	= 'style="' . $variables['icon_bg_color'] . $variables['icon_border']; 
     }
+    // Create icon style sentence by joining icon color and background border.
+    $variables['icon_style']	= 'style="'. $variables['icon_bg_color'] . $variables['icon_border']; 
 
     // Build the box background.
     if($variables['settings']['box-bg-color-status'] == '') {
