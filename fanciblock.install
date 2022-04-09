@@ -6,7 +6,7 @@
 
 function fanciblock_install() {
   global $user;
-  $filepath = drupal_get_path('module', 'fanciblock') . '/tulips.jpg';
+  $filepath = backdrop_get_path('module', 'fanciblock') . '/tulips.jpg';
   $file = entity_create('file', array());
   $file->filename = basename($filepath);
   $file->filepath = $filepath;
