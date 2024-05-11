@@ -207,7 +207,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
     $form['fanciblock_uri'] = array(
       '#title' => t('Image'),
       '#type' => 'managed_file',
-      '#description' => t('The uploaded image will be displayed on this page using the image style choosen below.'),
+      '#description' => t('The uploaded image will be displayed in this block.'),
       '#default_value' => isset($box['fanciblock_fid']) ? $box['fanciblock_fid'] : NULL,
       '#upload_location' => 'public://fanciblock_images/',
     );
