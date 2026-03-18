@@ -531,15 +531,14 @@ function fanciblock_default_settings() {
  * Submit handler for layout_block_configure_form() to add a condition.
  */
 function fanciblock_box_edit_box_open($form, &$form_state) {
-  form_state_values_clean($form_state);
-  
-  $fanciblock = $form_state['values'];
-  $fanciblock['boxes'] = $form_state['values']['boxes'];
+  $fanciblock = $form_state['values']['block_settings'];
+  $fanciblock['boxes'] = $form_state['values']['block_settings']['boxes'];
   $fanciblock['layout_name'] = $form_state['layout']->name;
   $fanciblock['block'] = $form_state['block']->uuid;
     // $link = 'admin/config/media/fanciblocks/new-fanciblock/' . $key . '/edit';
-  $button = $form_state['clicked_button']['#value'];
-  dpm($form_state['block']);
+  $button = $form_state['clicked_button']['#name'];
+  // dvm($form_state);
+  dvm($fanciblock, 'boxopen');
   fanciblock_set_tempstore($fanciblock);
   $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $fanciblock['fanciblock_name'] . '/' . $button . '/edit';
 }
@@ -552,6 +551,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
   // The entire fancibox
   $fanciblock = $form_state['values']['fanciblock'];
   global $user;
+  dvm($form_state['values'], 'boxsub');
   
   // Save common form values
   $box = array(
@@ -589,7 +589,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
   fanciblock_set_tempstore($fanciblock);
   $layout_name = $fanciblock['layout_name'];
   // $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
-  $form_state['redirect'] = 'http://backdrop.test/admin/structure/layouts/manage/' . $layout_name . '/configure-block/editor/' . $fanciblock['block'];
+  $form_state['redirect'] = 'admin/structure/layouts/manage/' . $layout_name . '/configure-block/editor/' . $fanciblock['block'];
   backdrop_set_message(t('Your configuration has been saved.'));
 }
 

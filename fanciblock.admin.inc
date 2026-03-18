@@ -49,7 +49,7 @@ function theme_fanciblock_admin_overview($variables) {
  */
 function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dpm($fanciblock);
+  dvm($fanciblock, 'feb');
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock += array(
@@ -350,9 +350,10 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   }
   form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
   //$boxes = _fanciblock_add_default_boxes($grid_count, $default_box, $delta);
-  //dpm($boxes);
 
-  $boxes = isset($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $default_box, $delta);
+  $boxes = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $default_box, $delta);
+  dvm($boxes, 'boxes');
+
 
   $form['boxes'] = array(
     '#type' => 'value',
