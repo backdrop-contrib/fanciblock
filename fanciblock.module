@@ -173,9 +173,12 @@ function fanciblock_title_callback($fanciblock) {
  * Loads a Fanciblock.
  */
 function fanciblock_load($fanciblock_name) {
-  $config = config('fanciblock.settings');
-  $fanciblock = $config->get($fanciblock_name);
-  return $fanciblock;
+  if ($fanciblock_name == 'new-fanciblock') {
+    return fanciblock_default_settings();
+  }
+  // $config = config('fanciblock.settings');
+  // $fanciblock = $config->get($fanciblock_name);
+  return fanciblock_get_settings($fanciblock_name);
 }
 
 /**
@@ -265,12 +268,13 @@ function fanciblock_block_info() {
  * Implements hook_block_configure().
  */
 function fanciblock_block_configure($delta = '', $settings = array()) {
+  dpm($settings);
   $form = array();
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     module_load_include('inc', 'fanciblock', 'fanciblock.admin');
-    if(!empty($settings)) {
-      $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
-      $settings = _flatten_fanciblock_settings ($fanciblock['settings']);
+    $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
+    if(!empty($fanciblock)) {
+      $settings = $fanciblock;
     }
     $form = fanciblock_edit_box('edit', $delta, $settings);
   }
@@ -286,6 +290,8 @@ function fanciblock_block_configure($delta = '', $settings = array()) {
  *  @details Details
  */
 function fanciblock_block_save($delta, &$edit = array()) {
+  dpm($edit);
+  $edit = _flatten_fanciblock_settings($edit);
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     $config = config('fanciblock.settings');
     
@@ -313,7 +319,7 @@ function fanciblock_block_save($delta, &$edit = array()) {
       );
     }
     
-    // Check and see if this block's settings already exist. Theyre saved in
+/*     // Check and see if this block's settings already exist. Theyre saved in
     // config, keyed by the block's unique name (fanciblock_name).
     $settings = $config->get($edit['fanciblock_name']);
     // If we dont find the settings, this is a new block being built, so
@@ -337,8 +343,9 @@ function fanciblock_block_save($delta, &$edit = array()) {
       form_set_error('', 'Cannot decrease number of boxes, please delete box instead');
     }
     $settings['settings'] = $edit;
+    dpm($settings);
     fanciblock_box_save($settings);
-  }
+ */  }
 }
 
 /**
@@ -417,12 +424,11 @@ function fanciblock_build_fanciblocks($delta, $settings) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.css'); // add css
   backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
   
-  $settings = _flatten_fanciblock_settings($settings);
   $settings['delta'] = $delta;
-  if($settings['icon-position'] == 'right' || $settings['icon-position'] == 'left') {
+  if($settings['icon_position'] == 'right' || $settings['icon_position'] == 'left') {
     return theme('fanciblock_horizontal', array('fanciblock_data' => $boxes, 'settings' => $settings, 'preview' => FALSE));
   }
-  elseif($settings['icon-position'] == 'top' || $settings['icon-position'] == 'boxcut') {
+  elseif($settings['icon_position'] == 'top' || $settings['icon_position'] == 'boxcut') {
     return theme('fanciblock_vertical', array('fanciblock_data' => $boxes, 'settings' => $settings, 'preview' => FALSE));
   }
 }
@@ -471,7 +477,175 @@ function _fanciblock_validate_color_value($element, &$form_state) {
  * @return
  *   Array of fanciblock data.
  */
-function fanciblock_get_settings($fanciblock_name) {
-  return config_get('fanciblock.settings', $fanciblock_name);
+function fanciblock_get_settings($fanciblock_name = NULL) {
+  if (!$fanciblock_name) {
+    dpm('one');
+    return fanciblock_default_settings();
+  }
+  $item = tempstore_get('fanciblock', $fanciblock_name);
+  if ($item) {
+    dpm('onet');
+    return $item;
+  }
+  if ($config = config_get('fanciblock.settings', $fanciblock_name)) {
+    dpm('oneb');
+    return $config;
+  }
+
+    dpm('onep');
+  return NULL;
 }
 
+/**
+ * Load all fanciblock data.
+ *
+ * @return
+ *   Array of fanciblock data.
+ */
+function fanciblock_default_settings() {
+  return array(
+    'fanciblock_type' => 'fanciicon',
+    'fanciblock_title' => 'Block one',
+    'fanciblock_name' => 'block_one',
+    'grid' => '3',
+    'icon_position' => 'top',
+    'icon_style' => 'none',
+    'icon_size' => 'medium',
+    'box_padding' => '20',
+    'icon_bg_color_status' => 0,
+    'icon_bg_color' => '#333333',
+    'icon_border_status' => 0,
+    'icon_border_width' => '1',
+    'icon_border_style' => 'solid',
+    'icon_border_color' => '#efefef',
+    'box_bg_color_status' => 0,
+    'box_bg_color' => '#efefef',
+    'box_border_status' => 0,
+    'box_border_width' => '1',
+    'box_border_style' => 'solid',
+    'box_border_color' => '#efefef',
+  );
+}
+
+/**
+ * Submit handler for layout_block_configure_form() to add a condition.
+ */
+function fanciblock_box_edit_box_open($form, &$form_state) {
+  form_state_values_clean($form_state);
+  
+  $fanciblock = $form_state['values'];
+  $fanciblock['boxes'] = $form_state['values']['boxes'];
+  $fanciblock['layout_name'] = $form_state['layout']->name;
+  $fanciblock['block'] = $form_state['block']->uuid;
+    // $link = 'admin/config/media/fanciblocks/new-fanciblock/' . $key . '/edit';
+  $button = $form_state['clicked_button']['#value'];
+  dpm($form_state['block']);
+  fanciblock_set_tempstore($fanciblock);
+  $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $fanciblock['fanciblock_name'] . '/' . $button . '/edit';
+}
+
+
+/**
+ * Process fanciblock box add/edit form submissions.
+ */
+function fanciblock_box_edit_box_submit($form, &$form_state) {
+  // The entire fancibox
+  $fanciblock = $form_state['values']['fanciblock'];
+  global $user;
+  
+  // Save common form values
+  $box = array(
+    'fanciblock_name' => $form_state['values']['fanciblock_name'],
+    'box_title' => $form_state['values']['box_title'],
+    'weight' => $form_state['values']['weight'],
+    'box_content' => $form_state['values']['box_content'],
+    'icon_link' => $form_state['values']['icon_link'],
+    'boxid' => $form_state['values']['boxid'] ? $form_state['values']['boxid'] : uniqid(),
+    'fanciblock_type' => $form_state['values']['fanciblock_type'],
+  );
+  // Save type-specific values. Start with fanciblock.
+  if($form_state['values']['fanciblock_type'] == 'fanciblock') {
+    // If the image field is set, save the image.
+    if($form_state['values']['fanciblock_uri']) {
+      $file = file_load($form_state['values']['fanciblock_uri']);
+      $file->status = FILE_STATUS_PERMANENT;
+      file_save($file);
+      file_usage_add($file, 'user', 'user', $user->uid);
+      $box['fanciblock_fid'] = $file->fid;
+      $box['fanciblock_uri'] = $file->uri;
+    }
+    // Otherwise keep the previous values. (We avoid empty boxes.)
+    else {
+      $box['fanciblock_fid'] = $fanciblock['boxes'][$form_state['values']['boxid']]['fanciblock_fid'];
+      $box['fanciblock_uri'] = $fanciblock['boxes'][$form_state['values']['boxid']]['fanciblock_uri'];
+    }
+  }
+  // If its a fanciicon, save the icon value. Its a select so its never empty.
+  elseif($form_state['values']['fanciblock_type'] == 'fanciicon') {
+    $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
+    $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
+  }
+  $fanciblock['boxes'][$box['boxid']] = $box;
+  fanciblock_set_tempstore($fanciblock);
+  $layout_name = $fanciblock['layout_name'];
+  // $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
+  $form_state['redirect'] = 'http://backdrop.test/admin/structure/layouts/manage/' . $layout_name . '/configure-block/editor/' . $fanciblock['block'];
+  backdrop_set_message(t('Your configuration has been saved.'));
+}
+
+/**
+ * AJAX callback to update the underlying layout form after updating a block.
+ */
+function fanciblock_ajax_update($form, $form_state) {
+
+  // Display error messages in the form if any.
+  if (form_get_errors()) {
+    $html = '';
+    $html .= theme('status_messages');
+    $html .= backdrop_render($form);
+    $title = isset($form['#title']) ? $form['#title'] : backdrop_get_title();
+    $commands[] = ajax_command_open_modal_dialog($title, $html, array('dialogClass' => 'layout-dialog'));
+  }
+  else {
+    // Get the dialog path as set in the redirect.
+    $dialog_path = $form_state['redirect'];
+    $page_callback_result = NULL;
+    if ($router_item = menu_get_item($dialog_path)) {
+      if ($router_item['access']) {
+        if ($router_item['include_file']) {
+          require_once BACKDROP_ROOT . '/' . $router_item['include_file'];
+        }
+        $page_callback_result = call_user_func_array($router_item['page_callback'], $router_item['page_arguments']);
+      }
+    }
+    $html = is_string($page_callback_result) ? $page_callback_result : backdrop_render($page_callback_result);
+    if (isset($page_callback_result['#title'])) {
+      $title = $page_callback_result['#title'];
+    }
+    else {
+      $title = $router_item['title'];
+    }
+    $commands[] = ajax_command_open_modal_dialog($title, $html, array('dialogClass' => 'layout-dialog'));
+  }
+
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands,
+  );
+}
+
+/**
+ * Store changes to a layout or menu item in the temporary store.
+ *
+ * @param Layout|LayoutMenuItem $item
+ *   The Layout item to save into tempstore.
+ * @param string $type
+ *   The type of item to save. Must be either "layout" or "menu_item".
+ */
+function fanciblock_set_tempstore($fanciblock) {
+  if (empty($fanciblock['fanciblock_name'])) {
+    return;
+  }
+
+  tempstore_set('fanciblock', $fanciblock['fanciblock_name'], $fanciblock, 604800);
+}

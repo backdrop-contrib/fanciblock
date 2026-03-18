@@ -49,6 +49,7 @@ function theme_fanciblock_admin_overview($variables) {
  */
 function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
+  dpm($fanciblock);
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock += array(
@@ -80,20 +81,14 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     ),
   );
 
-    // Grid Type
-  $form['grid']['grid'] = array(
-    '#type' => 'select',
-    '#title' => t('Grid Size'),
-    '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
-    '#default_value' => $grid_count,
-  );
-
   // Appearance fanciblock
   $form['appearance'] = array(
     '#type' => 'fieldset',
-    '#title' => t('appearance'),
+    '#title' => t('Appearance'),
+    '#collapsible' => TRUE,
+    '#collapsed' => TRUE,
   );
-  $form['appearance']['icon-position'] = array(
+  $form['appearance']['icon_position'] = array(
     '#type' => 'select',
     '#title' => t('Icon Position'),
     '#options' => array(
@@ -102,9 +97,9 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       "right"  => t('Right'),
       "boxcut" => t('Boxcut'),
     ),
-    '#default_value' => isset($fanciblock['icon-position']) ? $fanciblock['icon-position'] : 'top',
+    '#default_value' => isset($fanciblock['icon_position']) ? $fanciblock['icon_position'] : 'top',
   );
-  $form['appearance']['icon-style'] = array(
+  $form['appearance']['icon_style'] = array(
     '#type' => 'select',
     '#title' => t('Icon Style'),
     '#options' => array(
@@ -112,12 +107,12 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       "circle" => t('Circle'),
       "square"  => t('Square'),
     ),
-    '#default_value' => isset($fanciblock['icon-style']) ? $fanciblock['icon-style'] : 'none',
+    '#default_value' => isset($fanciblock['icon_style']) ? $fanciblock['icon_style'] : 'none',
   );
   
   if($delta == 'fanciblock') {
   /*----------- icon size -----------*/
-    $form['appearance']['icon-size'] = array(
+    $form['appearance']['icon_size'] = array(
       '#type' => 'select',
       '#title' => t('Icon Size'),
       '#options' => array(
@@ -128,13 +123,13 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
         "small_75x75" => t('Medium (75x75)'),
         "tiny_40x40"  => t('Small (40x40)'),
       ),
-      '#default_value' => isset($fanciblock['icon-size']) ? $fanciblock['icon-size'] : 'medium',
+      '#default_value' => isset($fanciblock['icon_size']) ? $fanciblock['icon_size'] : 'medium',
     );
   /*----------- end icon size -----------*/
   }
   elseif($delta == 'fanciicon') {
   /*----------- icon size -----------*/
-    $form['appearance']['icon-size'] = array(
+    $form['appearance']['icon_size'] = array(
       '#type' => 'select',
       '#title' => t('Icon Size'),
       '#options' => array(
@@ -144,89 +139,89 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
         "small"  => t('Small (45x45)'),
         "tiny"  => t('Tiny (25x25)'),
       ),
-      '#default_value' => isset($fanciblock['icon-size']) ? $fanciblock['icon-size'] : 'medium',
+      '#default_value' => isset($fanciblock['icon_size']) ? $fanciblock['icon_size'] : 'medium',
     );
   /*----------- end icon size -----------*/
   }
 /*----------- Box padding -----------*/
-  $form['appearance']['box-padding'] = array(
+  $form['appearance']['box_padding'] = array(
     '#type' => 'textfield',
     '#title' => t('Box Padding'),
     '#size' => 10,
     '#maxlength' => 2,
-    '#default_value' => isset($fanciblock['box-padding']) ? $fanciblock['box-padding'] : '20',
+    '#default_value' => isset($fanciblock['box_padding']) ? $fanciblock['box_padding'] : '20',
   );
 /*----------- end Box padding -----------*/
 
 /*----------- icon bg color -----------*/
-  $form['appearance']['icon-bg-color-wrapper'] = array(
+  $form['appearance']['icon_bg_color_wrapper'] = array(
     '#type' => 'container',
     '#title' => t('Icon Background Color'),
     '#states' => array(
       'invisible' => array(
-        ':input[name="block_settings[appearance][icon-style]"]' => array('value' => 'none'),
+        ':input[name="block_settings[appearance][icon_style]"]' => array('value' => 'none'),
       ),
     ),
   );
-  $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-status'] = array(
+  $form['appearance']['icon_bg_color_wrapper']['icon_bg_color_status'] = array(
     '#type' => 'checkbox',
     '#title' => t('Icon Background Color'),
-    '#default_value' => isset($fanciblock['icon-bg-color-status']) ? $fanciblock['icon-bg-color-status'] : false,
+    '#default_value' => isset($fanciblock['icon_bg_color_status']) ? $fanciblock['icon_bg_color_status'] : false,
   );
-  $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-container'] = array(
+  $form['appearance']['icon_bg_color_wrapper']['icon_bg_color_container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Icon Background Color'), 
     '#title_display' => 'invisible',
     '#attributes' => array('class' => array('container-inline')),
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][icon-bg-color-wrapper][icon-bg-color-status]"]' => array('checked' => TRUE),
+        ':input[name="block_settings[appearance][icon_bg_color_wrapper][icon_bg_color_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
-  $form['appearance']['icon-bg-color-wrapper']['icon-bg-color-container']['icon-bg-color'] = array(
+  $form['appearance']['icon_bg_color_wrapper']['icon_bg_color_container']['icon_bg_color'] = array(
     '#type' => 'color',
     '#title' => t('Icon Background Color'),
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
-    '#default_value' => isset($fanciblock['icon-bg-color']) ? $fanciblock['icon-bg-color'] : '#333333',
+    '#default_value' => isset($fanciblock['icon_bg_color']) ? $fanciblock['icon_bg_color'] : '#333333',
   );
 /*----------- end icon bg color -----------*/
 
 /*----------- icon border -----------*/
-  $form['appearance']['icon-border-wrapper'] = array(
+  $form['appearance']['icon_border_wrapper'] = array(
     '#type' => 'container',
     '#title' => t('Icon Background Color'),
     '#states' => array(
       'invisible' => array(
-        ':input[name="block_settings[appearance][icon-style]"]' => array('value' => 'none'),
+        ':input[name="block_settings[appearance][icon_style]"]' => array('value' => 'none'),
       ),
     ),
   );
-  $form['appearance']['icon-border-wrapper']['icon-border-status'] = array(
+  $form['appearance']['icon_border_wrapper']['icon_border_status'] = array(
     '#type' => 'checkbox',
     '#title' => t('Icon Border'),
-    '#default_value' => isset($fanciblock['icon-border']) ? $fanciblock['icon-border'] : false,
+    '#default_value' => isset($fanciblock['icon_border']) ? $fanciblock['icon_border'] : false,
   );
-  $form['appearance']['icon-border-wrapper']['icon-border-container'] = array(
+  $form['appearance']['icon_border_wrapper']['icon_border_container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Icon Border Settings'), 
     '#title_display' => 'invisible',
     '#attributes' => array('class' => array('container-inline')),
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][icon-border-wrapper][icon-border-status]"]' => array('checked' => TRUE),
+        ':input[name="block_settings[appearance][icon_border_wrapper][icon_border_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
-  $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-width'] = array(
+  $form['appearance']['icon_border_wrapper']['icon_border_container']['icon_border_width'] = array(
     '#type' => 'select',
     '#title' => t('Icon Border Width'),
     '#title_display' => 'invisible',
     '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
-    '#default_value' => isset($fanciblock['icon-border-width']) ? $fanciblock['icon-border-width'] : 1,
+    '#default_value' => isset($fanciblock['icon_border_width']) ? $fanciblock['icon_border_width'] : 1,
   );
-  $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-style'] = array(
+  $form['appearance']['icon_border_wrapper']['icon_border_container']['icon_border_style'] = array(
     '#type' => 'select',
     '#title' => t('Icon Border Style'),
     '#title_display' => 'invisible',
@@ -236,70 +231,70 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       "dotted"	=> t('Dotted'),
       "double"	=> t('Double'),
     ),
-    '#default_value' => isset($fanciblock['icon-border-style']) ? $fanciblock['icon-border-style'] : 1,
+    '#default_value' => isset($fanciblock['icon_border_style']) ? $fanciblock['icon_border_style'] : 1,
   );
-  $form['appearance']['icon-border-wrapper']['icon-border-container']['icon-border-color'] = array(
+  $form['appearance']['icon_border_wrapper']['icon_border_container']['icon_border_color'] = array(
     '#type' => 'color',
     '#title' => t('Icon Custom Border Color'),
     '#title_display' => 'invisible',
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
-    '#default_value' => isset($fanciblock['icon-border-color']) ? $fanciblock['icon-border-color'] : '#efefef',
+    '#default_value' => isset($fanciblock['icon_border_color']) ? $fanciblock['icon_border_color'] : '#efefef',
   );
 /*----------- end icon border -----------*/
 
 
 /*----------- Box background -----------*/
-  $form['appearance']['box-bg-color-status'] = array(
+  $form['appearance']['box_bg_color_status'] = array(
     '#type' => 'checkbox',
     '#title' => t('Box Background Color'),
-    '#default_value' => isset($fanciblock['box-bg-color-status']) ? $fanciblock['box-bg-color-status'] : false,
+    '#default_value' => isset($fanciblock['box_bg_color_status']) ? $fanciblock['box_bg_color_status'] : false,
   );
-  $form['appearance']['box-bg-color-container'] = array(
+  $form['appearance']['box_bg_color_container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Box Background Color'),
     '#title_display' => 'invisible',
     '#attributes' => array('class' => array('container-inline')),
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][box-bg-color-status]"]' => array('checked' => TRUE),
+        ':input[name="block_settings[appearance][box_bg_color_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
-  $form['appearance']['box-bg-color-container']['box-bg-color'] = array(
+  $form['appearance']['box_bg_color_container']['box_bg_color'] = array(
     '#type' => 'color',
     '#title' => t('Box Custom Background Color'),
     '#title_display' => 'invisible',
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
-    '#default_value' => isset($fanciblock['box-bg-color']) ? $fanciblock['box-bg-color'] : '#efefef',
+    '#default_value' => isset($fanciblock['box_bg_color']) ? $fanciblock['box_bg_color'] : '#efefef',
   );
 /*----------- end Box background -----------*/
 
 /*----------- box border -----------*/
-  $form['appearance']['box-border-status'] = array(
+  $form['appearance']['box_border_status'] = array(
     '#type' => 'checkbox',
     '#title' => t('Box Border'),
-    '#default_value' => isset($fanciblock['box-border-status']) ? $fanciblock['box-border-status'] : false,
+    '#default_value' => isset($fanciblock['box_border_status']) ? $fanciblock['box_border_status'] : false,
   );
-  $form['appearance']['box-border-container'] = array(
+  $form['appearance']['box_border_container'] = array(
     '#type' => 'fieldset', 
     '#title' => t('Box Border'), 
     '#attributes' => array('class' => array('container-inline')), 
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][box-border-status]"]' => array('checked' => TRUE),
+        ':input[name="block_settings[appearance][box_border_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
-  $form['appearance']['box-border-container']['box-border-width'] = array(
+  $form['appearance']['box_border_container']['box_border_width'] = array(
     '#type' => 'select',
     '#title' => t('Box Border Width'),
     '#title_display' => 'invisible',
     '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
-    '#default_value' => isset($fanciblock['box-border-width']) ? $fanciblock['box-border-width'] : 1,
+    '#default_value' => isset($fanciblock['box_border_width']) ? $fanciblock['box_border_width'] : 1,
   );
-  $form['appearance']['box-border-container']['box-border-style'] = array(
+  $form['appearance']['box_border_container']['box_border_style'] = array(
     '#type' => 'select',
     '#title' => t('Box Border Style'),
     '#title_display' => 'invisible',
@@ -309,17 +304,97 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       "dotted"	=> t('Dotted'),
       "double"	=> t('Double'),
     ),
-    '#default_value' => isset($fanciblock['box-border-style']) ? $fanciblock['box-border-style'] : 1,
+    '#default_value' => isset($fanciblock['box_border_style']) ? $fanciblock['box_border_style'] : 1,
   );
-  $form['appearance']['box-border-container']['box-border-color'] = array(
+  $form['appearance']['box_border_container']['box_border_color'] = array(
     '#type' => 'color',
     '#title' => t('Box Custom Border Color'),
     '#title_display' => 'invisible',
     '#description' => t('Enter background color'),
     '#element_validate' => array('_fanciblock_validate_color_value'),
-    '#default_value' => isset($fanciblock['box-border-color']) ? $fanciblock['box-border-color'] : '#efefef',
+    '#default_value' => isset($fanciblock['box_border_color']) ? $fanciblock['box_border_color'] : '#efefef',
   );
 /*----------- end box border -----------*/
 
+    // Grid Type
+  $form['grid']['grid'] = array(
+    '#type' => 'select',
+    '#title' => t('Grid Size'),
+    '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
+    '#default_value' => $grid_count,
+  );
+
+  // Set up defaults.
+  $config = config('fanciblock.settings');
+  $default_fid = $config->get('default_fid');
+  $default_fanciblock_uri = $config->get('default_fanciblock_uri');
+  $default_box = array(
+    'fanciblock_name' => $fanciblock['fanciblock_name'], 
+    'boxid' => '', 
+    'box_title' => '', 
+    'weight' => 0, 
+    'box_content' => array('value' => 'Hello!'),
+    'icon_link' => '',
+  );
+  if ($delta == 'fanciblock') {
+    $default_box += array(
+      'fanciblock_fid' => $default_fid, 
+      'fanciblock_uri' => $default_fanciblock_uri, 
+    );
+  }
+  elseif($delta == 'fanciicon') {
+    $default_box += array(
+      'fontawesome_icon' => 'fa-tablet',
+      'fontawesome_icon_color' => '#333333',
+    );
+  }
+  form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
+  //$boxes = _fanciblock_add_default_boxes($grid_count, $default_box, $delta);
+  //dpm($boxes);
+
+  $boxes = isset($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $default_box, $delta);
+
+  $form['boxes'] = array(
+    '#type' => 'value',
+    '#value' => $boxes,
+  );
+  $form['box_edit'] = array(
+    '#type' => 'container',
+    // todo use parents instead?
+    '#tree' => TRUE,
+    '#title' => t('Boxes'),
+    '#attributes' => array('class' => array('container-inline')),
+    '#prefix' => '<div id="fanciblock-box-wrapper">',
+    '#suffix' => '</div>',
+  );
+
+  foreach ($boxes as $key => $box) {
+    $form['box_edit']['grid_' . $key] = array(
+      '#type' => 'submit',
+      '#value' => 'markup' . $key,
+      '#name' => $key,
+      '#submit' => array(
+        'fanciblock_box_edit_box_open',
+      ),
+      // '#validate' => array(
+        // 'layout_block_configure_form_validate',
+      // ),
+      '#ajax' => array(
+        'callback' => 'fanciblock_ajax_update',
+      ),
+    );
+  }
+
+  // $form['row_settings'] = array(
+    // '#type' => 'container',
+    // '#id' => 'row_settings',
+    // '#parents' => array('row_settings'),
+  // );
+
+  // $form['row_settings'] = array(
+    // 'row' => backdrop_get_form('fanciblock_box_edit_box', $boxes[0]['boxid']),
+  // );
+
   return $form;
 }
+

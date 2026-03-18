@@ -14,13 +14,13 @@ $(window).load(function(){
       // Content padding will approximate 10 as box_padding approaches 0.
       padding_corrector = parseInt(box_padding) + (10/((100*parseInt(box_padding))+1));
 
-      if($(this).find(".fanciblock-icon-size").length>0 && $(this).find(".fanciblock-icon-style-none").length==0){
+      if($(this).find(".fanciblock-icon_size").length>0 && $(this).find(".fanciblock-icon_style-none").length==0){
       fa_icon_size = fa_icon_size+(fa_icon_size/2);
       }
 
-      fa_icon_pos_left = $(this).find(".fanciblock-icon-position-left");
-      fa_icon_pos_right = $(this).find(".fanciblock-icon-position-right");
-      fa_icon_pos_boxcut = $(this).find(".fanciblock-icon-position-boxcut");
+      fa_icon_pos_left = $(this).find(".fanciblock-icon_position-left");
+      fa_icon_pos_right = $(this).find(".fanciblock-icon_position-right");
+      fa_icon_pos_boxcut = $(this).find(".fanciblock-icon_position-boxcut");
 
       if(fa_icon_pos_left.length>0){
       $(this).find( ".fanciblock-title-content" ).css({'margin-left': fa_icon_size, 'padding-left': padding_corrector});

@@ -45,28 +45,28 @@ function template_preprocess_fanciblock_content(&$variables) {
     $variables['fanciblock_type'] = $variables['settings']['fanciblock_type'];
 
     $variables['grid']				= $variables['settings']['grid'];
-    $variables['icon_position']		= 'fanciblock-icon-position-'.$variables['settings']['icon-position'];
-    $variables['icon_looks']			= 'fanciblock-icon-style-'.$variables['settings']['icon-style'];
-    $variables['icon_size']			= 'fanciblock-icon-size-'.$variables['settings']['icon-size'];
+    $variables['icon_position']		= 'fanciblock-icon_position-'.$variables['settings']['icon_position'];
+    $variables['icon_looks']			= 'fanciblock-icon_style-'.$variables['settings']['icon_style'];
+    $variables['icon_size']			= 'fanciblock-icon_size-'.$variables['settings']['icon_size'];
     
     // Build icon border and background color
-    if($variables['settings']['icon-style']	!= 'none') {
+    if($variables['settings']['icon_style']	!= 'none') {
       // Build background color style.
-      if($variables['settings']['icon-bg-color-status']	== '') {
+      if($variables['settings']['icon_bg_color_status']	== '') {
         $variables['icon_bg_color']	= 'background-color:transparent;';
       } else {
-        $variables['icon_bg_color']	= 'background-color:'.$variables['settings']['icon-bg-color'].';';
+        $variables['icon_bg_color']	= 'background-color:'.$variables['settings']['icon_bg_color'].';';
       }
       
       // If icon border is set, then build the whole sentence by joining the 
       // border width, style and color settings sentences.
-      if($variables['settings']['icon-border-status']	== 1) {
+      if($variables['settings']['icon_border_status']	== 1) {
         $variables['icon_border']	= 'border-width:';
-        $variables['icon_border']	.= $variables['settings']['icon-border-width'] .'px;';
+        $variables['icon_border']	.= $variables['settings']['icon_border_width'] .'px;';
         $variables['icon_border']	.= 'border-style:';
-        $variables['icon_border']	.= $variables['settings']['icon-border-style'].';';
+        $variables['icon_border']	.= $variables['settings']['icon_border_style'].';';
         $variables['icon_border']	.= 'border-color:';
-        $variables['icon_border']	.= $variables['settings']['icon-border-color'].';';
+        $variables['icon_border']	.= $variables['settings']['icon_border_color'].';';
       }
     
     }
@@ -74,25 +74,25 @@ function template_preprocess_fanciblock_content(&$variables) {
     $variables['icon_style']	= 'style="'. $variables['icon_bg_color'] . $variables['icon_border']; 
 
     // Build the box background.
-    if($variables['settings']['box-bg-color-status'] == '') {
+    if($variables['settings']['box_bg_color_status'] == '') {
       $box_bg_color	= 'background-color:transparent;';
     } else {
-      $box_bg_color	= 'background-color:'.$variables['settings']['box-bg-color'].';';
+      $box_bg_color	= 'background-color:'.$variables['settings']['box_bg_color'].';';
     }
     
     // Build the box border.
-    if($variables['settings']['box-border-status'] == 1) {
+    if($variables['settings']['box_border_status'] == 1) {
       // Build a border color sentence.
       $box_border	= 'border-width:';
-      $box_border	.= $variables['settings']['box-border-width'] .'px;';
+      $box_border	.= $variables['settings']['box_border_width'] .'px;';
       $box_border	.= 'border-style:';
-      $box_border	.= $variables['settings']['box-border-style'].';';
+      $box_border	.= $variables['settings']['box_border_style'].';';
       $box_border	.= 'border-color:';
-      $box_border	.= $variables['settings']['box-border-color'].';';
+      $box_border	.= $variables['settings']['box_border_color'].';';
     }
     
     // Build padding
-    $box_padding		= 'padding:' . $variables['settings']['box-padding'] . 'px;';
+    $box_padding		= 'padding:' . $variables['settings']['box_padding'] . 'px;';
     
     // Finally
     $variables['box_style'] = 'style ="';
@@ -127,11 +127,11 @@ function template_preprocess_fanciblock_content(&$variables) {
     // Build the images or icons.
     if($variables['fanciblock_type'] == 'fanciblock') {
       // Use the full uploaded image for 'fullwidth' and 'none' styles.
-      if($variables['settings']['icon-size'] == 'none' || $variables['settings']['icon-size'] == 'fullwidth') {
+      if($variables['settings']['icon_size'] == 'none' || $variables['settings']['icon_size'] == 'fullwidth') {
         $item['image'] = theme('image', array('uri' => $item['fanciblock_uri']));      
       }
       else {
-        $item['image'] = theme('image_style', array('uri' => $item['fanciblock_uri'], 'style_name' => $variables['settings']['icon-size']));
+        $item['image'] = theme('image_style', array('uri' => $item['fanciblock_uri'], 'style_name' => $variables['settings']['icon_size']));
       }
     }
     else {
