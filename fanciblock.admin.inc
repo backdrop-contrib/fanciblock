@@ -359,6 +359,12 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#type' => 'value',
     '#value' => $boxes,
   );
+  $not_saved = empty($fanciblock['block']);
+  $form['not_saved_message'] = array(
+    '#type' => 'help',
+    '#markup' => t('Save this block to enable editing boxes'),
+    '#access' => $not_saved,
+  );
   $form['box_edit'] = array(
     '#type' => 'container',
     // todo use parents instead?
@@ -374,6 +380,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
       '#type' => 'submit',
       '#value' => 'markup' . $key,
       '#name' => $key,
+      '#disabled' => $not_saved,
       '#submit' => array(
         'fanciblock_box_edit_box_open',
       ),
@@ -395,6 +402,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   // $form['row_settings'] = array(
     // 'row' => backdrop_get_form('fanciblock_box_edit_box', $boxes[0]['boxid']),
   // );
+  dvm($settings, 'settings');
 
   return $form;
 }
