@@ -355,6 +355,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
   //$boxes = _fanciblock_add_default_boxes($grid_count, $default_box, $delta);
 
   $form_state['fanciblock_name'] = $fanciblock['fanciblock_name'];
+  $form_state['fanciblock'] = $fanciblock;
   $form_state['delta'] = $delta;
   $fanciblock['boxes'] = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $fanciblock, $delta);
   $form_state['boxes'] = !empty($form_state['boxes']) ? $form_state['boxes'] : $fanciblock['boxes'];

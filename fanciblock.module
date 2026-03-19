@@ -374,7 +374,8 @@ function fanciblock_box_save($settings) {
 /**
  * Create a fanciblock box with default values.
  */
-function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {  
+function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
+  dvm('default block making');
   // Set up defaults.
   $config = config('fanciblock.settings');
   $default_fid = $config->get('default_fid');
@@ -386,9 +387,9 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
   while($i <= $number) {
     $id = uniqid();
     $default_box = array(
-      'fanciblock_name' => $fanciblock['fanciblock_name'], 
+      'fanciblock_name' => isset($fanciblock['fanciblock_name']) ? $fanciblock['fanciblock_name'] : '', 
       'boxid' => '', 
-      'box_title' => $fanciblock['fanciblock_title'], 
+      'box_title' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : '', 
       'weight' => 0, 
       'box_content' => array('value' => 'Hello!'),
       'icon_link' => '',
@@ -407,7 +408,7 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
     }
     $title = $default_box['box_title'];
     $default_box['boxid'] = $i . $id;
-    $default_box['box_title'] = $title . ' ' . $i;
+    $default_box['box_title'] = empty($title) ? '' : $title . ' ' . $i;
     $default_box['fanciblock_type'] = (string) $delta;
     $boxes[$i . $id] = $default_box;
     $i++;
@@ -563,14 +564,15 @@ function fanciblock_default_settings() {
  * Submit handler for layout_block_configure_form() to add a condition.
  */
 function fanciblock_box_edit_box_open($form, &$form_state) {
-  $fanciblock = $form_state['values']['block_settings'];
-  $fanciblock['boxes'] = $form_state['values']['block_settings']['boxes'];
+  $fanciblock = $form_state['fanciblock'];
+  // $fanciblock['boxes'] = $form_state['values']['block_settings']['boxes'];
   $fanciblock['layout_name'] = $form_state['layout']->name;
   $fanciblock['block'] = $form_state['block']->uuid;
     // $link = 'admin/config/media/fanciblocks/new-fanciblock/' . $key . '/edit';
   $button = $form_state['clicked_button']['#name'];
   // dvm($form_state);
-  dvm($fanciblock, 'boxopen');
+  dvm($form_state['values'], 'boxopen');
+  dvm($form_state['fanciblock'], 'boxopen2');
   fanciblock_set_tempstore($fanciblock);
   $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $fanciblock['fanciblock_name'] . '/' . $button . '/edit';
 }
@@ -587,13 +589,13 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
   
   // Save common form values
   $box = array(
-    'fanciblock_name' => $form_state['values']['fanciblock_name'],
+    'fanciblock_name' => $fanciblock['fanciblock_name'],
     'box_title' => $form_state['values']['box_title'],
     'weight' => $form_state['values']['weight'],
     'box_content' => $form_state['values']['box_content'],
     'icon_link' => $form_state['values']['icon_link'],
     'boxid' => $form_state['values']['boxid'] ? $form_state['values']['boxid'] : uniqid(),
-    'fanciblock_type' => $form_state['values']['fanciblock_type'],
+    'fanciblock_type' => $fanciblock['fanciblock_type'],
   );
   // Save type-specific values. Start with fanciblock.
   if($form_state['values']['fanciblock_type'] == 'fanciblock') {
@@ -617,7 +619,9 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon'] = $form_state['values']['fontawesome_icon'];
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
+  dvm($box, 'boxsubbox');
   $fanciblock['boxes'][$box['boxid']] = $box;
+  dvm($fanciblock, 'boxsubfb');
   fanciblock_set_tempstore($fanciblock);
   $layout_name = $fanciblock['layout_name'];
   // $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];

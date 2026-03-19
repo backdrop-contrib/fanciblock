@@ -53,7 +53,9 @@ class Fanciicon extends Block {
     parent::form($form, $form_state);
     form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
     form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
-    $form += fanciblock_edit_box($form, $form_state, 'edit', 'fanciicon', $this->settings);
+    $tempstore_settings = fanciblock_get_settings($this->settings['fanciblock_name']);
+    $settings = $tempstore_settings ? $tempstore_settings : $this->settings;
+    $form += fanciblock_edit_box($form, $form_state, 'edit', 'fanciicon', $settings);
   }
 
   /**
@@ -102,6 +104,7 @@ class Fanciicon extends Block {
     $this->settings['box_border_style'] = $values['box_border_style'];
     $this->settings['box_border_color'] = $values['box_border_color'];
       
+    dvm($this->settings, 'this->settings');
 
 /*     // Save the things not handled by BlockText.
     if (!empty($form_state['values']['image'])) {
