@@ -161,7 +161,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#title' => t('Icon Background Color'),
     '#states' => array(
       'invisible' => array(
-        ':input[name="block_settings[appearance][icon_style]"]' => array('value' => 'none'),
+        ':input[name="appearance[icon_style]"]' => array('value' => 'none'),
       ),
     ),
   );
@@ -177,7 +177,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#attributes' => array('class' => array('container-inline')),
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][icon_bg_color_wrapper][icon_bg_color_status]"]' => array('checked' => TRUE),
+        ':input[name="appearance[icon_bg_color_wrapper][icon_bg_color_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -196,7 +196,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#title' => t('Icon Background Color'),
     '#states' => array(
       'invisible' => array(
-        ':input[name="block_settings[appearance][icon_style]"]' => array('value' => 'none'),
+        ':input[name="appearance[icon_style]"]' => array('value' => 'none'),
       ),
     ),
   );
@@ -212,7 +212,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#attributes' => array('class' => array('container-inline')),
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][icon_border_wrapper][icon_border_status]"]' => array('checked' => TRUE),
+        ':input[name="appearance[icon_border_wrapper][icon_border_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -259,7 +259,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#attributes' => array('class' => array('container-inline')),
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][box_bg_color_status]"]' => array('checked' => TRUE),
+        ':input[name="appearance[box_bg_color_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
@@ -285,7 +285,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#attributes' => array('class' => array('container-inline')), 
     '#states' => array(
       'visible' => array(
-        ':input[name="block_settings[appearance][box_border_status]"]' => array('checked' => TRUE),
+        ':input[name="appearance[box_border_status]"]' => array('checked' => TRUE),
       ),
     ),
   );
