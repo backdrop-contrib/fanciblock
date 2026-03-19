@@ -367,13 +367,38 @@ function fanciblock_box_save($settings) {
 /**
  * Create a fanciblock box with default values.
  */
-function _fanciblock_add_default_boxes($number, $default_box, $delta) {  
+function _fanciblock_add_default_boxes($number, $fanciblock_name, $delta) {  
+  // Set up defaults.
+  $config = config('fanciblock.settings');
+  $default_fid = $config->get('default_fid');
+  $default_fanciblock_uri = $config->get('default_fanciblock_uri');
+
+
   $boxes = array();
   $title = $default_box['box_title'];
   $i = 1;
   while($i <= $number) {
     $id = uniqid();
-    // Set the box title.
+    $default_box = array(
+      'fanciblock_name' => $fanciblock_name, 
+      'boxid' => '', 
+      'box_title' => '', 
+      'weight' => 0, 
+      'box_content' => array('value' => 'Hello!'),
+      'icon_link' => '',
+    );
+    if ($delta == 'fanciblock') {
+      $default_box += array(
+        'fanciblock_fid' => $default_fid, 
+        'fanciblock_uri' => $default_fanciblock_uri, 
+      );
+    }
+    elseif($delta == 'fanciicon') {
+      $default_box += array(
+        'fontawesome_icon' => 'fa-tablet',
+        'fontawesome_icon_color' => '#333333',
+      );
+    }
     $default_box['boxid'] = $i . $id;
     $default_box['box_title'] = $title . ' ' . $i;
     $default_box['fanciblock_type'] = (string) $delta;
@@ -628,6 +653,33 @@ function fanciblock_ajax_update($form, $form_state) {
     $commands[] = ajax_command_open_modal_dialog($title, $html, array('dialogClass' => 'layout-dialog'));
   }
 
+  return array(
+    '#type' => 'ajax',
+    '#commands' => $commands,
+  );
+}
+
+
+/**
+ * Submit handler for layout_settings_form() that adds an additional path.
+ */
+function fanciblock_add_additional_box($form, &$form_state) {
+  dvm($form_state, 'form_state');
+  //$form_state['boxes'] += _fanciblock_add_default_boxes(1, $form_state['fanciblock_name'], $form_state['delta']);
+  $form_state['rebuild'] = TRUE;
+}
+
+/**
+ * AJAX handler for layout_settings_form().
+ *
+ * Returns updated contexts and additional path form data when adding or
+ * removing additional paths.
+ */
+function fanciblock_add_additional_box_ajax($form, &$form_state) {
+  // $commands[] = ajax_command_remove('.l-messages');
+  // $commands[] = ajax_command_html('#layout-messages', theme('status_messages'));
+  $commands[] = ajax_command_html('#fanciblock-box-wrapper', backdrop_render($form['box_edit']));
+  // $commands[] = ajax_command_html('#layout-contexts', backdrop_render($form['context_wrapper']));
   return array(
     '#type' => 'ajax',
     '#commands' => $commands,

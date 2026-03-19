@@ -349,15 +349,17 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     );
   }
   form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
+  form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
   //$boxes = _fanciblock_add_default_boxes($grid_count, $default_box, $delta);
 
-  $boxes = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $default_box, $delta);
-  dvm($boxes, 'boxes');
+  $form_state['fanciblock_name'] = $fanciblock['fanciblock_name'];
+  $form_state['delta'] = $delta;
+  $form_state['boxes'] = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $fanciblock['fanciblock_name'], $delta);
 
 
   $form['boxes'] = array(
     '#type' => 'value',
-    '#value' => $boxes,
+    '#value' => $form_state['boxes'],
   );
   $not_saved = empty($fanciblock['block']);
   $form['not_saved_message'] = array(
@@ -375,7 +377,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#suffix' => '</div>',
   );
 
-  foreach ($boxes as $key => $box) {
+  foreach ($form_state['boxes'] as $key => $box) {
     $form['box_edit']['grid_' . $key] = array(
       '#type' => 'submit',
       '#value' => 'markup' . $key,
@@ -393,6 +395,22 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     );
   }
 
+  $form['add_additional_box'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add box'),
+    '#attributes' => array(
+      'class' => array('layout-link-button', 'layout-add-box')
+    ),
+    '#validate' => array(),
+    '#submit' => array(
+      'fanciblock_add_additional_box',
+    ),
+    '#ajax' => array(
+      'callback' => 'fanciblock_add_additional_box_ajax',
+      'wrapper' => 'fanciblock-box-wrapper',
+    ),
+  );
+
   // $form['row_settings'] = array(
     // '#type' => 'container',
     // '#id' => 'row_settings',
@@ -406,4 +424,3 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
 
   return $form;
 }
-
