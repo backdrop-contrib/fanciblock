@@ -47,7 +47,7 @@ function theme_fanciblock_admin_overview($variables) {
 /**
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
-function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
+function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
   dvm($fanciblock, 'feb');
 
@@ -70,6 +70,8 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#default_value' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : '',
   );
   $form['fanciblock_name'] = array(
+    '#size' => 60,
+    '#maxlength' => 64,
     '#required' => TRUE,
     '#type' => 'machine_name',
     '#title' => t('Fanciblock ID'),
@@ -77,7 +79,7 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
     '#description' => t('A unique name for this Fanciblock. It must only contain lowercase letters, numbers and underscores.'),
     '#machine_name' => array(
       'exists' => 'fanciblock_load',
-      'source' => array('block_settings', 'fanciblock_title'),
+      'source' => array('fanciblock_title'),
     ),
   );
 
@@ -354,14 +356,15 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
 
   $form_state['fanciblock_name'] = $fanciblock['fanciblock_name'];
   $form_state['delta'] = $delta;
-  $form_state['boxes'] = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $fanciblock['fanciblock_name'], $delta);
+  $fanciblock['boxes'] = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $fanciblock, $delta);
+  $form_state['boxes'] = !empty($form_state['boxes']) ? $form_state['boxes'] : $fanciblock['boxes'];
 
 
   $form['boxes'] = array(
     '#type' => 'value',
     '#value' => $form_state['boxes'],
   );
-  $not_saved = empty($fanciblock['block']);
+  $not_saved = empty($form_state['block']);
   $form['not_saved_message'] = array(
     '#type' => 'help',
     '#markup' => t('Save this block to enable editing boxes'),
@@ -420,7 +423,6 @@ function fanciblock_edit_box($type, $delta, $fanciblock = array()) {
   // $form['row_settings'] = array(
     // 'row' => backdrop_get_form('fanciblock_box_edit_box', $boxes[0]['boxid']),
   // );
-  dvm($settings, 'settings');
 
   return $form;
 }

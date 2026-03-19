@@ -251,16 +251,23 @@ function fanciblock_overview_title($fanciblock) {
   return $fanciblock['title'];
 }
 
+function fanciblock_autoload_info() {
+  return array(
+    'Fanciicon' => 'block.Fanciicon.inc',
+  );
+}
+
 /**
  * Implements hook_block_info().
  */
 function fanciblock_block_info() {
   $blocks = array();
-  $blocks['fanciblock']['info'] = t('Fanciblock image');
-  $blocks['fanciblock']['description'] = t('Fanciblock image');
+  // $blocks['fanciblock']['info'] = t('Fanciblock image');
+  // $blocks['fanciblock']['description'] = t('Fanciblock image');
   
   $blocks['fanciicon']['info'] = t('Fanciblock icon');
   $blocks['fanciicon']['description'] = t('Fanciblock icon');
+  $blocks['fanciicon']['class'] = 'Fanciicon';
   return $blocks;
 }
 
@@ -367,7 +374,7 @@ function fanciblock_box_save($settings) {
 /**
  * Create a fanciblock box with default values.
  */
-function _fanciblock_add_default_boxes($number, $fanciblock_name, $delta) {  
+function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {  
   // Set up defaults.
   $config = config('fanciblock.settings');
   $default_fid = $config->get('default_fid');
@@ -375,14 +382,13 @@ function _fanciblock_add_default_boxes($number, $fanciblock_name, $delta) {
 
 
   $boxes = array();
-  $title = $default_box['box_title'];
   $i = 1;
   while($i <= $number) {
     $id = uniqid();
     $default_box = array(
-      'fanciblock_name' => $fanciblock_name, 
+      'fanciblock_name' => $fanciblock['fanciblock_name'], 
       'boxid' => '', 
-      'box_title' => '', 
+      'box_title' => $fanciblock['fanciblock_title'], 
       'weight' => 0, 
       'box_content' => array('value' => 'Hello!'),
       'icon_link' => '',
@@ -399,6 +405,7 @@ function _fanciblock_add_default_boxes($number, $fanciblock_name, $delta) {
         'fontawesome_icon_color' => '#333333',
       );
     }
+    $title = $default_box['box_title'];
     $default_box['boxid'] = $i . $id;
     $default_box['box_title'] = $title . ' ' . $i;
     $default_box['fanciblock_type'] = (string) $delta;
@@ -462,7 +469,7 @@ function fanciblock_build_fanciblocks($delta, $settings) {
 /**
  * Flattens the settings array to remove parent keys.
  */
-function _flatten_fanciblock_settings ($settings = array()) {
+function _flatten_fanciblock_settings($settings = array()) {
   $results = &backdrop_static('fanciblock_flatten', array());
   foreach($settings as $key => $setting) {
     if(is_array($setting)) {
@@ -664,8 +671,10 @@ function fanciblock_ajax_update($form, $form_state) {
  * Submit handler for layout_settings_form() that adds an additional path.
  */
 function fanciblock_add_additional_box($form, &$form_state) {
-  dvm($form_state, 'form_state');
-  //$form_state['boxes'] += _fanciblock_add_default_boxes(1, $form_state['fanciblock_name'], $form_state['delta']);
+  $new_box = _fanciblock_add_default_boxes(1, array('fanciblock_name' => $form_state['fanciblock_name'], 'fanciblock_title' => $form_state['fanciblock_title']), $form_state['delta']);
+  dvm($new_box, 'form_statenewbox');
+  $form_state['boxes'] += $new_box;
+  dvm($form_state['boxes'], 'form_state');
   $form_state['rebuild'] = TRUE;
 }
 
