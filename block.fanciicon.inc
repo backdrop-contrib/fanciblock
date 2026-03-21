@@ -26,7 +26,7 @@ class Fanciicon extends Block {
       return check_plain($this->settings['admin_label']);
     }
 
-    return !empty($this->settings['title']) ? check_plain($this->settings['title']) : t('fanciblock block');
+    return !empty($this->settings['title']) ? check_plain($this->settings['title']) : t('Fanciblock');
   }
 
   /**
@@ -38,11 +38,8 @@ class Fanciicon extends Block {
    * @return string
    */
   function getContent() {
-    if (!empty($this->settings['content'])) {
-      return check_markup(token_replace($this->settings['content']), $this->settings['format'], '', TRUE);
-    }
-    elseif (!empty($this->settings['title']) || !empty($this->settings['image'])) {
-      return '&nbsp;';
+    if (!empty($this->settings)) {
+      return fanciblock_build_fanciblocks('fanciicon', $this->settings);
     }
   }
 
@@ -63,11 +60,6 @@ class Fanciicon extends Block {
    */
   function formValidate($form, &$form_state) {
     parent::formValidate($form, $form_state);
-
-    // Check that one of title, text, or image, is provided.
-    // if (empty($form_state['values']['image']) && empty($form_state['values']['title']) && empty($form_state['values']['content']['value'])) {
-      // form_error($form['image'], t('Background image, a Display title, or Block content must be provided.'));
-    // }
   }
 
   /**
@@ -101,41 +93,5 @@ class Fanciicon extends Block {
     $this->settings['box_border_width'] = $values['box_border_width'];
     $this->settings['box_border_style'] = $values['box_border_style'];
     $this->settings['box_border_color'] = $values['box_border_color'];
-      
-
-/*     // Save the things not handled by BlockText.
-    if (!empty($form_state['values']['image'])) {
-      $file = file_load($form_state['values']['image']);
-      if ($form_state['values']['image'] != $form['image']['#default_value']) {
-        // Record that the layout module is using this file. Also marks permanent.
-        // But only if the value has changed.
-        file_usage_add($file, 'layout', 'block', $file->fid);
-        if (!empty($form['image']['#default_value'])) {
-          // Decrement usage for replaced file.
-          $old_file = file_load($form['image']['#default_value']);
-          if ($old_file) {
-            file_usage_delete($old_file, 'layout', 'block', $old_file->fid);
-          }
-        }
-      }
-      // Store the filepath separately for use as inline background image.
-      $absolute_path = parse_url($GLOBALS['base_url'], PHP_URL_PATH) . '/';
-      $fileurl = file_create_url($file->uri);
-      $filepath = str_replace($GLOBALS['base_url'] . '/', $absolute_path, $fileurl);
-      $form_state['values']['image_path'] = $filepath;
-      $this->settings['image'] = $form_state['values']['image'];
-      $this->settings['image_path'] = $form_state['values']['image_path'];
-    }
-    else {
-      // No new file but an old one existed, decrement usage.
-      if (!empty($form['image']['#default_value'])) {
-        $old_file = file_load($form['image']['#default_value']);
-        if ($old_file) {
-          file_usage_delete($old_file, 'layout', 'block', $old_file->fid);
-        }
-      }
-      $this->settings['image'] = NULL;
-      $this->settings['image_path'] = NULL;
-    }
- */  }
+  }
 }

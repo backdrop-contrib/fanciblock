@@ -7,7 +7,7 @@ clear:both;
 .fanciblock-box img{
   max-width: 100%;
 }
-.fanciblock-box.fanciblock-icon-size-fullwidth img {
+.fanciblock-box.fanciblock-icon_size-fullwidth img {
   width: 100%;
 }
 .fanciblock-box h3{
@@ -27,47 +27,47 @@ clear:both;
   font-size: inherit;
   color: inherit;
 }
-.fanciblock-icon-position-top {
+.fanciblock-icon_position-top {
   text-align: center;
 }
-.fanciblock-icon-position-top .fanciblock-icon {
+.fanciblock-icon_position-top .fanciblock-icon {
   margin-bottom: 20px;
   clear: both;
 }
-.fanciblock-icon-position-left {
+.fanciblock-icon_position-left {
   text-align: left;
 }
-.fanciblock-icon-position-left .fanciblock-icon {
+.fanciblock-icon_position-left .fanciblock-icon {
   position: absolute;
   left: 0;
   top: 0;
 }
-.fanciblock-icon-position-left.fanciblock-padding .fanciblock-icon {
+.fanciblock-icon_position-left.fanciblock-padding .fanciblock-icon {
   left: 20px;
   top: 20px;
 }
-.fanciblock-icon-position-right {
+.fanciblock-icon_position-right {
   text-align: right;
 }
-.fanciblock-icon-position-right .fanciblock-icon {
+.fanciblock-icon_position-right .fanciblock-icon {
   position: absolute;
 /*   right: 20px;
   top: 20px;
  */}
-.fanciblock-icon-position-right.fanciblock-padding .fanciblock-icon {
+.fanciblock-icon_position-right.fanciblock-padding .fanciblock-icon {
   right: 20px;
   top: 20px;
   clear: both;
 }
-.fanciblock-icon-position-boxcut {
+.fanciblock-icon_position-boxcut {
   text-align: center;
 }
-.fanciblock-icon-position-boxcut .fanciblock-icon {
+.fanciblock-icon_position-boxcut .fanciblock-icon {
   margin-bottom: 20px;
   clear: both;
 }
 
-.fanciblock-icon-style-circle .fanciblock-icon  img, .fanciblock-icon .fa.fanciblock-icon-style-circle {
+.fanciblock-icon_style-circle .fanciblock-icon  img, .fanciblock-icon .fa.fanciblock-icon_style-circle {
   -webkit-border-radius: 50%;
   -moz-border-radius: 50%;
   border-radius: 50%;
@@ -79,7 +79,7 @@ clear:both;
   background-clip: inherit;
   text-align: center;
 }
-.fanciblock-icon-style-square .fanciblock-icon img, .fanciblock-icon .fa.fanciblock-icon-style-square {
+.fanciblock-icon_style-square .fanciblock-icon img, .fanciblock-icon .fa.fanciblock-icon_style-square {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -91,48 +91,48 @@ clear:both;
   background-clip: inherit;
   text-align: center;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-xlarge {
+.fanciblock-icon .fa.fanciblock-icon_size-xlarge {
   font-size: 150px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-xlarge.fanciblock-icon-style-circle,
-.fanciblock-icon .fa.fanciblock-icon-size-xlarge.fanciblock-icon-style-square {
+.fanciblock-icon .fa.fanciblock-icon_size-xlarge.fanciblock-icon_style-circle,
+.fanciblock-icon .fa.fanciblock-icon_size-xlarge.fanciblock-icon_style-square {
   width: 240px;
   height: 240px;
   line-height: 240px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-large {
+.fanciblock-icon .fa.fanciblock-icon_size-large {
   font-size: 110px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-large.fanciblock-icon-style-circle,
-.fanciblock-icon .fa.fanciblock-icon-size-large.fanciblock-icon-style-square {
+.fanciblock-icon .fa.fanciblock-icon_size-large.fanciblock-icon_style-circle,
+.fanciblock-icon .fa.fanciblock-icon_size-large.fanciblock-icon_style-square {
   width: 180px;
   height: 180px;
   line-height: 180px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-medium {
+.fanciblock-icon .fa.fanciblock-icon_size-medium {
   font-size: 70px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-medium.fanciblock-icon-style-circle,
-.fanciblock-icon .fa.fanciblock-icon-size-medium.fanciblock-icon-style-square {
+.fanciblock-icon .fa.fanciblock-icon_size-medium.fanciblock-icon_style-circle,
+.fanciblock-icon .fa.fanciblock-icon_size-medium.fanciblock-icon_style-square {
   width: 105px;
   height: 105px;
   line-height: 105px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-small {
+.fanciblock-icon .fa.fanciblock-icon_size-small {
   font-size: 45px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-small.fanciblock-icon-style-circle,
-.fanciblock-icon .fa.fanciblock-icon-size-small.fanciblock-icon-style-square {
+.fanciblock-icon .fa.fanciblock-icon_size-small.fanciblock-icon_style-circle,
+.fanciblock-icon .fa.fanciblock-icon_size-small.fanciblock-icon_style-square {
   font-size: 40px;
   width: 75px;
   height: 75px;
   line-height: 75px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-tiny {
+.fanciblock-icon .fa.fanciblock-icon_size-tiny {
   font-size: 25px;
 }
-.fanciblock-icon .fa.fanciblock-icon-size-tiny.fanciblock-icon-style-circle,
-.fanciblock-icon .fa.fanciblock-icon-size-tiny.fanciblock-icon-style-square {
+.fanciblock-icon .fa.fanciblock-icon_size-tiny.fanciblock-icon_style-circle,
+.fanciblock-icon .fa.fanciblock-icon_size-tiny.fanciblock-icon_style-square {
   width: 40px;
   height: 40px;
   line-height: 40px;
