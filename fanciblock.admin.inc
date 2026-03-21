@@ -49,7 +49,6 @@ function theme_fanciblock_admin_overview($variables) {
  */
 function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dvm($fanciblock, 'feb');
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock += array(
@@ -376,17 +375,27 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     // todo use parents instead?
     '#tree' => TRUE,
     '#title' => t('Boxes'),
-    '#attributes' => array('class' => array('container-inline')),
+    '#attributes' => array('class' => array('fanciblock-box-wrapper')),
     '#prefix' => '<div id="fanciblock-box-wrapper">',
     '#suffix' => '</div>',
   );
 
+  $form['#attached']['js'][] = backdrop_get_path('module', 'layout') . '/js/layout.admin.js';
+
   foreach ($form_state['boxes'] as $key => $box) {
     $form['box_edit']['grid_' . $key] = array(
+      '#type' => 'container',
+      '#theme' => array('fanciblock_box_preview'),
+      '#attributes' => array('class' => array('fanciblock-box-preview-container')),
+      'fanciblock' => $fanciblock,
+      'box' => $box,
+    );
+    $form['box_edit']['grid_' . $key]['button'] = array(
       '#type' => 'submit',
-      '#value' => 'markup' . $key,
+      '#value' => t('Edit'),
       '#name' => $key,
       '#disabled' => $not_saved,
+      '#attributes' => array('class' => array('layout-link-button')),
       '#submit' => array(
         'fanciblock_box_edit_box_open',
       ),

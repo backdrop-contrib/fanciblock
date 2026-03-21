@@ -80,8 +80,6 @@ class Fanciicon extends Block {
     unset($form_state['values']['boxes']);
 
     $values = _flatten_fanciblock_settings($form_state['values']);
-    dvm($form_state['values'], 'formSubmit1');
-    dvm($values, 'formSubmit');
 
     $this->settings['fanciblock_type'] = $values['fanciblock_type'];
     $this->settings['fanciblock_title'] = $values['fanciblock_title'];
@@ -104,7 +102,6 @@ class Fanciicon extends Block {
     $this->settings['box_border_style'] = $values['box_border_style'];
     $this->settings['box_border_color'] = $values['box_border_color'];
       
-    dvm($this->settings, 'this->settings');
 
 /*     // Save the things not handled by BlockText.
     if (!empty($form_state['values']['image'])) {

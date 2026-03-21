@@ -164,9 +164,7 @@ function fanciblock_box_add_box($fanciblock) {
  */
 function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL, $type = 'edit') {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dvm($fanciblock, 'edboxform');
   $fanciblock_boxes = $fanciblock['boxes'];
-  dvm($boxid);
   $box = $fanciblock_boxes[$boxid];
 
   $form['boxid'] = array(

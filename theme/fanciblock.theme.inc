@@ -149,3 +149,59 @@ function template_preprocess_fanciblock_content(&$variables) {
     $variables['items'][$box] = $item;
   }
 }
+
+/**
+ * Template preprocess handler for 'fanciblock_content' theme.
+ */
+function theme_fanciblock_box_preview(&$variables) {
+  backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'); // add library fontawesome.css
+  backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.css'); // add css
+  backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
+
+  $form = $variables['form'];
+  $fanciblock = $form['fanciblock'];
+  unset($form['fanciblock']);  
+  
+  $output = '';
+  $box = $form['box'];
+
+  if($fanciblock['fanciblock_type'] == 'fanciblock') {
+      $image = theme('image_style', array('uri' => $box['fanciblock_uri'], 'style_name' => 'thumbnail'));
+  }
+  else {
+    $icon_style	= 'style="'. $fanciblock['icon_bg_color'] . $fanciblock['icon_border']; 
+
+    $image = theme('fanciblock_fontawesome_icon_build', array(
+      'class' => $box['fontawesome_icon'], 
+      'size' => 'small', 
+      'looks' => '', 
+      'style' => 'style="color:' . $box['fontawesome_icon_color'] . ';"',
+    ));
+  }
+
+  $output .= '<div class="fanciblock-box-wrapper">';
+  $output .= '<div class="fanciblock-col-inner">';
+    $output .= '<div class="fanciblock-box">';
+      if ($fanciblock['icon_position'] == 'left' || $fanciblock['icon_position'] == 'top') {
+        $output .= '<div class="fanciblock-icon">';
+        $output .= $image;
+        $output .= '</div>';
+      }
+      $output .= '<div class="fanciblock-title-content">';
+      $output .= $box['box_title'];
+      $output .= '</div>';
+      $output .= '<div class="fanciblock-button">';
+      $output .= backdrop_render($form['button']);
+      $output .= '</div>';
+      if ($icon_position == 'fanciblock-icon_position-right') {
+        $output .= '<div class="fanciblock-icon">';
+        $output .= $image;
+        $output .= '</div>';
+      }
+    $output .= '</div>';
+  $output .= '</div>';
+  $output .= '</div>';
+
+  return $output;
+}
+

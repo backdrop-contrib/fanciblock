@@ -4,3 +4,23 @@
   width: 80px;
   height: 40px;
 }
+#fanciblock-box-wrapper .fanciblock-box-preview-container div {
+  display: block;
+}
+
+.fanciblock-box-preview-container {
+  padding: 10px;
+  border-radius: 4px;
+  background-color: #fff;
+  border: 2px solid #eaeaea;
+  text-align: center;
+}
+
+.fanciblock-box-preview-container .fanciblock-icon .fa {
+  font-size: 64pt;
+}
+
+.fanciblock-box-wrapper {
+  display: flex;
+  gap: 15px;
+}
