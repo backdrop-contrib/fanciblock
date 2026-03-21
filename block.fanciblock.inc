@@ -5,7 +5,7 @@
  *
  *  This class allows us to create hero blocks with image backgrounds.
  */
-class Fanciicon extends Block {
+class Fanciblock extends Block {
   /**
    * {@inheritdoc}
    */
@@ -26,7 +26,7 @@ class Fanciicon extends Block {
       return check_plain($this->settings['admin_label']);
     }
 
-    return !empty($this->settings['title']) ? check_plain($this->settings['title']) : t('Fanciicon');
+    return !empty($this->settings['title']) ? check_plain($this->settings['title']) : t('Fanciblock');
   }
 
   /**
@@ -39,7 +39,7 @@ class Fanciicon extends Block {
    */
   function getContent() {
     if (!empty($this->settings)) {
-      return fanciblock_build_fanciblocks('fanciicon', $this->settings);
+      return fanciblock_build_fanciblocks('fanciblock', $this->settings);
     }
   }
 
@@ -48,11 +48,13 @@ class Fanciicon extends Block {
    */
   function form(&$form, &$form_state) {
     parent::form($form, $form_state);
+    dpm($this);
     form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
     form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
     $tempstore_settings = fanciblock_get_settings($this->settings['fanciblock_name']);
+    $tempstore_settings['fanciblock_type'] = $this->delta;
     $settings = $tempstore_settings ? $tempstore_settings : $this->settings;
-    $form += fanciblock_edit_box($form, $form_state, 'edit', 'fanciicon', $settings);
+    $form += fanciblock_edit_box($form, $form_state, 'edit', 'fanciblock', $settings);
   }
 
   /**

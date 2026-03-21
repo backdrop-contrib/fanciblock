@@ -166,6 +166,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
   $fanciblock_boxes = $fanciblock['boxes'];
   $box = $fanciblock_boxes[$boxid];
+  dpm($fanciblock);
 
   $form['boxid'] = array(
     '#type' => 'hidden',

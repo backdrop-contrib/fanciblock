@@ -258,6 +258,7 @@ function fanciblock_overview_title($fanciblock) {
 function fanciblock_autoload_info() {
   return array(
     'Fanciicon' => 'block.Fanciicon.inc',
+    'Fanciblock' => 'block.Fanciblock.inc',
   );
 }
 
@@ -266,8 +267,9 @@ function fanciblock_autoload_info() {
  */
 function fanciblock_block_info() {
   $blocks = array();
-  // $blocks['fanciblock']['info'] = t('Fanciblock image');
-  // $blocks['fanciblock']['description'] = t('Fanciblock image');
+  $blocks['fanciblock']['info'] = t('Fanciblock image');
+  $blocks['fanciblock']['description'] = t('Fanciblock image');
+  $blocks['fanciblock']['class'] = 'Fanciblock';
   
   $blocks['fanciicon']['info'] = t('Fanciblock icon');
   $blocks['fanciicon']['description'] = t('Fanciblock icon');

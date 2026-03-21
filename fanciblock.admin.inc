@@ -49,6 +49,7 @@ function theme_fanciblock_admin_overview($variables) {
  */
 function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
+  dpm($delta);
 
   $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
   $fanciblock += array(
