@@ -68,14 +68,13 @@ class Fanciicon extends Block {
   function formSubmit($form, &$form_state) {
     parent::formSubmit($form, $form_state);
     form_state_values_clean($form_state);
-    $this->settings['boxes'] = $form_state['values']['boxes'];
-    unset($form_state['values']['boxes']);
+    $this->settings['boxes'] = $form_state['boxes'];
+    $this->settings['fanciblock_name'] = $form_state['values']['fanciblock_name'];
 
     $values = _flatten_fanciblock_settings($form_state['values']);
 
     $this->settings['fanciblock_type'] = $values['fanciblock_type'];
     $this->settings['fanciblock_title'] = $values['fanciblock_title'];
-    $this->settings['fanciblock_name'] = $values['fanciblock_name'];
     $this->settings['grid'] = $values['grid'];
     $this->settings['icon_position'] = $values['icon_position'];
     $this->settings['icon_style'] = $values['icon_style'];

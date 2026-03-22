@@ -159,11 +159,12 @@ function theme_fanciblock_box_preview(&$variables) {
   backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
 
   $form = $variables['form'];
-  $fanciblock = $form['fanciblock'];
+    dpm($variables);
+  $fanciblock = $form['#fanciblock'];
   unset($form['fanciblock']);  
   
   $output = '';
-  $box = $form['box'];
+  $box = $form['#box'];
 
   if($fanciblock['fanciblock_type'] == 'fanciblock') {
       $image = theme('image_style', array('uri' => $box['fanciblock_uri'], 'style_name' => 'thumbnail'));
@@ -191,7 +192,7 @@ function theme_fanciblock_box_preview(&$variables) {
       $output .= $box['box_title'];
       $output .= '</div>';
       $output .= '<div class="fanciblock-button">';
-      $output .= backdrop_render($form['button']);
+      $output .= $fanciblock['disabled'] ? t('Edit') : backdrop_render($form['button']);
       $output .= '</div>';
       if ($icon_position == 'fanciblock-icon_position-right') {
         $output .= '<div class="fanciblock-icon">';

@@ -49,14 +49,10 @@ function theme_fanciblock_admin_overview($variables) {
  */
 function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dpm($delta);
+  dpm($fanciblock);
 
-  $grid_count = isset($fanciblock['grid']) ? $fanciblock['grid'] : 3;
-  $fanciblock += array(
-    'fanciblock_name' => '',
-    'title' => '',
-    'optionset' => '',
-  );
+  $fanciblock += fanciblock_default_settings();
+
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
     '#value' => $delta,
@@ -69,18 +65,10 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#description' => t('A unique name for this Fanciblock.'),
     '#default_value' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : '',
   );
+  $fanciblock['fanciblock_name'] = isset($form_state['block']->uuid) ? $form_state['block']->uuid : '';
   $form['fanciblock_name'] = array(
-    '#size' => 60,
-    '#maxlength' => 64,
-    '#required' => TRUE,
-    '#type' => 'machine_name',
-    '#title' => t('Fanciblock ID'),
-    '#default_value' => isset($fanciblock['fanciblock_name']) ? $fanciblock['fanciblock_name'] : '',
-    '#description' => t('A unique name for this Fanciblock. It must only contain lowercase letters, numbers and underscores.'),
-    '#machine_name' => array(
-      'exists' => 'fanciblock_load',
-      'source' => array('fanciblock_title'),
-    ),
+    '#value' => $fanciblock['fanciblock_name'],
+    '#type' => 'value',
   );
 
   // Appearance fanciblock
@@ -318,54 +306,18 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
   );
 /*----------- end box border -----------*/
 
-    // Grid Type
-  $form['grid']['grid'] = array(
-    '#type' => 'select',
-    '#title' => t('Grid Size'),
-    '#options' => array('1' => 1, 2, 3, 4, 5, 6, 7, 8),
-    '#default_value' => $grid_count,
-  );
-
-  // Set up defaults.
-  $config = config('fanciblock.settings');
-  $default_fid = $config->get('default_fid');
-  $default_fanciblock_uri = $config->get('default_fanciblock_uri');
-  $default_box = array(
-    'fanciblock_name' => $fanciblock['fanciblock_name'], 
-    'boxid' => '', 
-    'box_title' => '', 
-    'weight' => 0, 
-    'box_content' => array('value' => 'Hello!'),
-    'icon_link' => '',
-  );
-  if ($delta == 'fanciblock') {
-    $default_box += array(
-      'fanciblock_fid' => $default_fid, 
-      'fanciblock_uri' => $default_fanciblock_uri, 
-    );
-  }
-  elseif($delta == 'fanciicon') {
-    $default_box += array(
-      'fontawesome_icon' => 'fa-tablet',
-      'fontawesome_icon_color' => '#333333',
-    );
-  }
-  form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
-  form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
-  //$boxes = _fanciblock_add_default_boxes($grid_count, $default_box, $delta);
-
   $form_state['fanciblock_name'] = $fanciblock['fanciblock_name'];
   $form_state['fanciblock'] = $fanciblock;
   $form_state['delta'] = $delta;
+
   $fanciblock['boxes'] = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $fanciblock, $delta);
   $form_state['boxes'] = !empty($form_state['boxes']) ? $form_state['boxes'] : $fanciblock['boxes'];
 
 
-  $form['boxes'] = array(
-    '#type' => 'value',
-    '#value' => $form_state['boxes'],
-  );
-  $not_saved = empty($form_state['block']);
+  $not_saved = empty($form_state['block']->uuid);
+  $fanciblock['disabled'] = $not_saved;
+
+  // dvm($form_state['block']);
   $form['not_saved_message'] = array(
     '#type' => 'help',
     '#markup' => t('Save this block to enable editing boxes'),
@@ -388,14 +340,14 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
       '#type' => 'container',
       '#theme' => array('fanciblock_box_preview'),
       '#attributes' => array('class' => array('fanciblock-box-preview-container')),
-      'fanciblock' => $fanciblock,
-      'box' => $box,
+      '#fanciblock' => $fanciblock,
+      '#box' => $box,
     );
     $form['box_edit']['grid_' . $key]['button'] = array(
       '#type' => 'submit',
       '#value' => t('Edit'),
       '#name' => $key,
-      '#disabled' => $not_saved,
+      '#access' => !$not_saved,
       '#attributes' => array('class' => array('layout-link-button')),
       '#submit' => array(
         'fanciblock_box_edit_box_open',

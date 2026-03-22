@@ -104,7 +104,7 @@ function fanciblock_menu() {
   //List box.
   $items['admin/config/media/fanciblocks/%fanciblock'] = array(
     'title' => 'List Box',
-    'title callback' => 'fanciblock_title_callback',
+    //'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(4),
     'page callback' => 'backdrop_get_form',
     'page arguments' => array('fanciblock_box_overview_form', 4),
@@ -117,28 +117,30 @@ function fanciblock_menu() {
     'page callback' => 'fanciblock_box_add_box',
     'page arguments' => array(4),
     'access arguments' => array('administer fanciblock'),
-    'type' => MENU_LOCAL_ACTION,
+    'type' => MENU_CALLBACK,
     'file' => 'fanciblock.box.admin.inc',
   );
   //Edit box.
   $items['admin/config/media/fanciblocks/%fanciblock/%/edit'] = array(
     'title' => 'Edit box',
-    'title callback' => 'fanciblock_title_callback',
+    //'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(4),
     'page callback' => 'backdrop_get_form',
     'page arguments' => array('fanciblock_box_edit_box', 4, 5, 6),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
+    'type' => MENU_CALLBACK,
   );
   //Delete box.
   $items['admin/config/media/fanciblocks/%fanciblock/%/delete'] = array(
     'title' => 'Delete box',
-    'title callback' => 'fanciblock_title_callback',
+    //'title callback' => 'fanciblock_title_callback',
     'title arguments' => array(4),
     'page callback' => 'backdrop_get_form',
     'page arguments' => array('fanciblock_box_delete_box', 4, 5, 6),
     'access arguments' => array('administer fanciblock'),
     'file' => 'fanciblock.box.admin.inc',
+    'type' => MENU_CALLBACK,
   );
   // THis is just a fake link. It will show up in fanciblock contextual menus
   // so that we can identify them. THis is because all blocks have their 
@@ -514,17 +516,17 @@ function _fanciblock_validate_color_value($element, &$form_state) {
  *   Array of fanciblock data.
  */
 function fanciblock_get_settings($fanciblock_name = NULL) {
-  if (!$fanciblock_name) {
-    return fanciblock_default_settings();
-  }
+  // if (!$fanciblock_name) {
+    // return fanciblock_default_settings();
+  // }
   $item = tempstore_get('fanciblock', $fanciblock_name);
   if ($item) {
     return $item;
   }
-  if ($config = config_get('fanciblock.settings', $fanciblock_name)) {
-    dpm('oneb');
-    return $config;
-  }
+  // if ($config = config_get('fanciblock.settings', $fanciblock_name)) {
+    // dpm('oneb');
+    // return $config;
+  // }
 
   return NULL;
 }
@@ -537,9 +539,9 @@ function fanciblock_get_settings($fanciblock_name = NULL) {
  */
 function fanciblock_default_settings() {
   return array(
-    'fanciblock_type' => 'fanciicon',
-    'fanciblock_title' => 'Block one',
-    'fanciblock_name' => 'block_one',
+    'fanciblock_type' => '',
+    'fanciblock_title' => '',
+    'fanciblock_name' => '',
     'grid' => '3',
     'icon_position' => 'top',
     'icon_style' => 'none',
