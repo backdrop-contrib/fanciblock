@@ -53,6 +53,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
 
   $fanciblock += fanciblock_default_settings();
 
+  $fanciblock['fanciblock_type'] = $delta;
   $form['fanciblock_type'] = array(
     '#type' => 'hidden',
     '#value' => $delta,
