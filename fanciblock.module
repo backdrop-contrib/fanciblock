@@ -453,9 +453,7 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
  *   Array of fanciblocks with contained boxes data.
  */
 function fanciblock_build_fanciblocks($delta, $settings) {
-  // Load the config file.
-  $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
-  $boxes = $fanciblock['boxes'];
+  $boxes = $settings['boxes'];
   backdrop_sort($boxes, array('weight' => SORT_NUMERIC));
   
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'); // add library fontawesome.css
