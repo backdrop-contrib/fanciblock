@@ -3,3 +3,4 @@ description = Allows administrators to create and configure blocks with images a
 package = Fanciblock
 backdrop = 1.x
 type = module
+libraries[] = bootstrap4-gs

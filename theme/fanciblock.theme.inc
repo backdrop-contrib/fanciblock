@@ -113,8 +113,8 @@ function template_preprocess_fanciblock_content(&$variables) {
     // Build column classes.
     // Add first, last, odd, even class.
     $i++;
-    $variables['col_class'][0] = 'fanciblock-col';
-    $variables['col_class'][1] = 'fanciblock-col-'.$i;
+    $variables['col_class'][0] = 'fanciblock-grid-'.$i;
+    $variables['col_class'][1] = 'fanciblock-col';
     if ($i == 1) { $variables['col_class'][2] = 'col-first';}
     if ($i == $item_number) {$variables['col_class'][2] = 'col-last';}
     if ($i % 2 == 0) {$variables['col_class'][4] = 'col-even';}

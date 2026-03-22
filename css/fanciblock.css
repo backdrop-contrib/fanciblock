@@ -147,14 +147,19 @@ clear:both;
 }
 .fanciblock-grid .fanciblock-grid-inner {
   margin: 0 0 0 -20px;
-  overflow:hidden;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+}
+.fanciblock-grid .fanciblock-col .fanciblock-box,
+.fanciblock-grid .fanciblock-col .fanciblock-col-inner {
+  height: 100%;
 }
 .fanciblock-grid .fanciblock-col {
   padding: 0;
   margin: 0;
   list-style: none;
   list-style-image: none;
-  float: left;
   width: 100%;
   clear: none;
 }
@@ -164,25 +169,25 @@ clear:both;
 
 @media all and (min-width: 767px) and (max-width: 980px) {
 
-  .fanciblock-grid-2 .fanciblock-col {
+  .fanciblock-grid-2.fanciblock-col {
     width: 50%;
   }
-  .fanciblock-grid-3 .fanciblock-col {
+  .fanciblock-grid-3.fanciblock-col {
     width: 50%;
   }
-  .fanciblock-grid-4 .fanciblock-col {
+  .fanciblock-grid-4.fanciblock-col {
     width: 50%;
   }
-  .fanciblock-grid-5 .fanciblock-col {
+  .fanciblock-grid-5.fanciblock-col {
     width: 33.33333333333333%;
   }
-  .fanciblock-grid-6 .fanciblock-col {
+  .fanciblock-grid-6.fanciblock-col {
     width: 33.33333333333333%;
   }
-  .fanciblock-grid-7 .fanciblock-col {
+  .fanciblock-grid-7.fanciblock-col {
     width: 33.33333333333333%;
   }
-  .fanciblock-grid-8 .fanciblock-col {
+  .fanciblock-grid-8.fanciblock-col {
     width: 25%;
   }
 
@@ -195,28 +200,28 @@ clear:both;
 }
 
 @media all and (min-width: 981px) {
-  .fanciblock-grid-2 .fanciblock-col {
+  .fanciblock-grid-2.fanciblock-col {
     width: 50%;
   }
-  .fanciblock-grid-3 .fanciblock-col {
+  .fanciblock-grid-3.fanciblock-col {
     width: 33.33333333333333%;
   }
-  .fanciblock-grid-4 .fanciblock-col {
+  .fanciblock-grid-4.fanciblock-col {
     width: 25%;
   }
-  .fanciblock-grid-5 .fanciblock-col {
+  .fanciblock-grid-5.fanciblock-col {
     width: 20%;
   }
-  .fanciblock-grid-6 .fanciblock-col {
+  .fanciblock-grid-6.fanciblock-col {
     width: 16.66666666666667%;
   }
-  .fanciblock-grid-7 .fanciblock-col {
+  .fanciblock-grid-7.fanciblock-col {
     width: 14.28571428571429%;
   }
-  .fanciblock-grid-8 .fanciblock-col {
+  .fanciblock-grid-8.fanciblock-col {
     width: 12.5%;
   }
-  .fanciblock-grid-2 .fanciblock-col.col-odd {
+  .fanciblock-grid-2.fanciblock-col.col-odd {
     clear: both;
   }
 }
