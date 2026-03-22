@@ -38,6 +38,7 @@ class Fanciicon extends Block {
    * @return string
    */
   function getContent() {
+    dpm($this);
     if (!empty($this->settings)) {
       return fanciblock_build_fanciblocks('fanciicon', $this->settings);
     }
@@ -92,5 +93,8 @@ class Fanciicon extends Block {
     $this->settings['box_border_width'] = $values['box_border_width'];
     $this->settings['box_border_style'] = $values['box_border_style'];
     $this->settings['box_border_color'] = $values['box_border_color'];
+
+    tempstore_clear('fanciblock', $this->settings['fanciblock_name']);
+
   }
 }

@@ -11,6 +11,7 @@
  * Template preprocess handler for 'fanciblock_content' theme.
  */
 function template_preprocess_fanciblock_content(&$variables) {
+    dpm($variables);
   // Each fanciblock instance gets a unique id
   $fanciblock_id = &backdrop_static('fanciblock_id', 0);
   $variables['id'] = ++$fanciblock_id;
@@ -193,6 +194,9 @@ function theme_fanciblock_box_preview(&$variables) {
       $output .= '</div>';
       $output .= '<div class="fanciblock-button">';
       $output .= $fanciblock['disabled'] ? t('Edit') : backdrop_render($form['button']);
+      $output .= '</div>';
+      $output .= '<div class="fanciblock-button">';
+      $output .= $fanciblock['disabled'] ? t('Delete') : backdrop_render($form['delete']);
       $output .= '</div>';
       if ($icon_position == 'fanciblock-icon_position-right') {
         $output .= '<div class="fanciblock-icon">';

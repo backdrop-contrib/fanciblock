@@ -358,6 +358,21 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
         'callback' => 'fanciblock_ajax_update',
       ),
     );
+    $form['box_edit']['grid_' . $key]['delete'] = array(
+      '#type' => 'submit',
+      '#value' => t('Delete'),
+      '#name' => $key,
+      '#access' => !$not_saved,
+      '#attributes' => array('class' => array('layout-link-button')),
+      '#limit_validation_errors' => array(),
+      '#submit' => array(
+        'fanciblock_delete_box',
+      ),
+      '#ajax' => array(
+        'callback' => 'fanciblock_box_add_delete_ajax',
+        'wrapper' => 'fanciblock-box-wrapper',
+      ),
+    );
   }
 
   $form['add_additional_box'] = array(
@@ -371,7 +386,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
       'fanciblock_add_additional_box',
     ),
     '#ajax' => array(
-      'callback' => 'fanciblock_add_additional_box_ajax',
+      'callback' => 'fanciblock_box_add_delete_ajax',
       'wrapper' => 'fanciblock-box-wrapper',
     ),
   );

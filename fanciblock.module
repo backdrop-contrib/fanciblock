@@ -674,6 +674,15 @@ function fanciblock_ajax_update($form, $form_state) {
   );
 }
 
+/**
+ * Process fanciblock box add/edit form submissions.
+ */
+function fanciblock_delete_box($form, &$form_state) {
+  $button = $form_state['clicked_button']['#name'];
+  unset($form_state['boxes'][$button]);
+  $form_state['rebuild'] = TRUE;
+}
+
 
 /**
  * Submit handler for layout_settings_form() that adds an additional path.
@@ -690,7 +699,7 @@ function fanciblock_add_additional_box($form, &$form_state) {
  * Returns updated contexts and additional path form data when adding or
  * removing additional paths.
  */
-function fanciblock_add_additional_box_ajax($form, &$form_state) {
+function fanciblock_box_add_delete_ajax($form, &$form_state) {
   // $commands[] = ajax_command_remove('.l-messages');
   // $commands[] = ajax_command_html('#layout-messages', theme('status_messages'));
   $commands[] = ajax_command_html('#fanciblock-box-wrapper', backdrop_render($form['box_edit']));
