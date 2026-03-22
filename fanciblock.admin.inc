@@ -379,6 +379,7 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
   $form['add_additional_box'] = array(
     '#type' => 'submit',
     '#value' => t('Add box'),
+    '#access' => !$not_saved,
     '#attributes' => array(
       'class' => array('layout-link-button', 'layout-add-box')
     ),

@@ -394,7 +394,7 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
     $default_box = array(
       'fanciblock_name' => isset($fanciblock['fanciblock_name']) ? $fanciblock['fanciblock_name'] : '', 
       'boxid' => '', 
-      'box_title' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : '', 
+      'box_title' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : 'Box title', 
       'weight' => 0, 
       'box_content' => array('value' => 'Hello!'),
       'icon_link' => '',
