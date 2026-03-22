@@ -317,7 +317,6 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
   $not_saved = empty($form_state['block']->uuid);
   $fanciblock['disabled'] = $not_saved;
 
-  // dvm($form_state['block']);
   $form['not_saved_message'] = array(
     '#type' => 'help',
     '#markup' => t('Save this block to enable editing boxes'),

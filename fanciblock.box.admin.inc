@@ -164,7 +164,7 @@ function fanciblock_box_add_box($fanciblock) {
  */
 function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL, $type = 'edit') {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dpm($fanciblock);
+  dpm($form_state);
   $fanciblock_boxes = $fanciblock['boxes'];
   $box = $fanciblock_boxes[$boxid];
 
@@ -242,18 +242,20 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
     '#submit' => array(
       'fanciblock_box_edit_box_submit',
     ),
-    // '#validate' => array(
-      // 'layout_block_configure_form_validate',
-    // ),
     '#ajax' => array(
       'callback' => 'fanciblock_ajax_update',
     ),
   );
-  $form['actions']['delete'] = array(
+  $form['actions']['cancel'] = array(
     '#type' => 'submit',
-    '#value' => t('Delete'),
-    '#access' => $type == 'edit',
-    '#submit' => array('fanciblock_box_delete_box_submit_call'),
+    '#value' => t('Cancel'),
+    //'#attributes' => array('class' => array('layout-link-button')),
+    '#submit' => array(
+      'fanciblock_box_edit_box_cancel_submit',
+    ),
+    '#ajax' => array(
+      'callback' => 'fanciblock_ajax_update',
+    ),
   );
   return $form;
 }

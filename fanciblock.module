@@ -578,6 +578,16 @@ function fanciblock_box_edit_box_open($form, &$form_state) {
 /**
  * Process fanciblock box add/edit form submissions.
  */
+function fanciblock_box_edit_box_cancel_submit($form, &$form_state) {
+  $fanciblock = $form_state['values']['fanciblock'];
+  $layout_name = $fanciblock['layout_name'];
+  // $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
+  $form_state['redirect'] = 'admin/structure/layouts/manage/' . $layout_name . '/configure-block/editor/' . $fanciblock['block'];
+}
+
+/**
+ * Process fanciblock box add/edit form submissions.
+ */
 function fanciblock_box_edit_box_submit($form, &$form_state) {
   // The entire fancibox
   $fanciblock = $form_state['values']['fanciblock'];
