@@ -1,26 +1,31 @@
-$(window).load(function(){
+(function ($) {
+
+"use strict";
+
+Backdrop.behaviors.fanciblockDisplay = {
+  attach: function(context) {
   $('.fanciblock').once('fanciblock', function() {
     $(this).each(function() {
 
       /*--- get max icon width ----*/
-      fa_icon_size = 0;
+      let fa_icon_size = 0;
       $(this).find(".fanciblock-icon img, .fanciblock-icon .fa").each(function(){
-        fa_width = parseInt($(this).width());
+        let fa_width = parseInt($(this).width());
         if (fa_width > fa_icon_size) {
           fa_icon_size = fa_width;
         }
       });
-      box_padding = $(this).find(".fanciblock-box").css("padding-left");
+      let box_padding = $(this).find(".fanciblock-box").css("padding-left");
       // Content padding will approximate 10 as box_padding approaches 0.
-      padding_corrector = parseInt(box_padding) + (10/((100*parseInt(box_padding))+1));
+      let padding_corrector = parseInt(box_padding) + (10/((100*parseInt(box_padding))+1));
 
       if($(this).find(".fanciblock-icon_size").length>0 && $(this).find(".fanciblock-icon_style-none").length==0){
       fa_icon_size = fa_icon_size+(fa_icon_size/2);
       }
 
-      fa_icon_pos_left = $(this).find(".fanciblock-icon_position-left");
-      fa_icon_pos_right = $(this).find(".fanciblock-icon_position-right");
-      fa_icon_pos_boxcut = $(this).find(".fanciblock-icon_position-boxcut");
+      let fa_icon_pos_left = $(this).find(".fanciblock-icon_position-left");
+      let fa_icon_pos_right = $(this).find(".fanciblock-icon_position-right");
+      let fa_icon_pos_boxcut = $(this).find(".fanciblock-icon_position-boxcut");
 
       if(fa_icon_pos_left.length>0){
       $(this).find( ".fanciblock-title-content" ).css({'margin-left': fa_icon_size, 'padding-left': padding_corrector});
@@ -37,20 +42,18 @@ $(window).load(function(){
       }
 
       /*--- get max fanciblock box height ----*/
-      box_height = 0;
+      let box_height = 0;
       $(this).find(".fanciblock-box").each(function(){
-        img_height = parseInt($(this).find('img').height());
-        b_height = parseInt($(this).height());
-        if (b_height > box_height) {
-          box_height = b_height;
-        }
+        let img_height = parseInt($(this).find('.fanciblock-icon').height());
         if (img_height > box_height) {
           box_height = img_height;
         }
         
       });
-      $(this).find(".fanciblock-box").height(box_height);
+      $(this).find(".fanciblock-icon").height(box_height);
 
     }); 
   });
-});
+}};
+
+})(jQuery);
