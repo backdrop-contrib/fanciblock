@@ -11,7 +11,6 @@
  * Template preprocess handler for 'fanciblock_content' theme.
  */
 function template_preprocess_fanciblock_content(&$variables) {
-    dpm($variables);
   // Each fanciblock instance gets a unique id
   $fanciblock_id = &backdrop_static('fanciblock_id', 0);
   $variables['id'] = ++$fanciblock_id;
@@ -72,7 +71,7 @@ function template_preprocess_fanciblock_content(&$variables) {
     
     }
     // Create icon style sentence by joining icon color and background border.
-    $variables['icon_style']	= 'style="'. $variables['icon_bg_color'] . $variables['icon_border']; 
+    $variables['icon_style']	= $variables['icon_bg_color'] . $variables['icon_border']; 
 
     // Build the box background.
     if($variables['settings']['box_bg_color_status'] == '') {
@@ -140,7 +139,7 @@ function template_preprocess_fanciblock_content(&$variables) {
         'class' => $item['fontawesome_icon'], 
         'size' => $variables['icon_size'], 
         'looks' => $variables['icon_looks'], 
-        'style' => $variables['icon_style'] . 'color:' . $item['fontawesome_icon_color'] . ';"',
+        'style' => $variables['icon_style'] . 'color:' . $item['fontawesome_icon_color'],
       ));
     }
     
@@ -160,7 +159,6 @@ function theme_fanciblock_box_preview(&$variables) {
   backdrop_add_js(backdrop_get_path('module', 'fanciblock') . '/js/fanciblock.js'); // add js
 
   $form = $variables['form'];
-    dpm($variables);
   $fanciblock = $form['#fanciblock'];
   unset($form['fanciblock']);  
   

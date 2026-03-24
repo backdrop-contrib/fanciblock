@@ -79,13 +79,14 @@ function _fanciicon_fontawesome_icon_build($box) {
  * @ingroup themeable
  */
 function theme_fanciblock_fontawesome_icon_build($variables) {
-  $output = '<i class="fa ';
-  $output .= $variables['class'] . ' ';
-  $output .= $variables['size'] . ' ';
-  $output .= $variables['looks'] . '" ';
-  $output .= $variables['style'] . '></i>';
+  $options = array('attributes' => array(
+    'style' => $variables['style'], 
+    'class' => array(
+      $variables['size'], 
+      $variables['looks']
+  )));
 
-  return $output;
+  return icon($variables['class'], $options);
 }
 
 /**
@@ -164,7 +165,6 @@ function fanciblock_box_add_box($fanciblock) {
  */
 function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL, $type = 'edit') {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dpm($form_state);
   $fanciblock_boxes = $fanciblock['boxes'];
   $box = $fanciblock_boxes[$boxid];
 
@@ -214,10 +214,21 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
     );
   }
   elseif($fanciblock['fanciblock_type'] == 'fanciicon') {
+    $core_icons = scandir('core/misc/icons');
+    foreach ($core_icons as $icon) {
+      if (substr($icon, -4, 4) == '.svg') {
+        $icon_name = substr($icon, 0, -4);
+        if (substr($icon_name, -4, 4) == 'fill') {
+          continue;
+        }
+        $icons[$icon_name] = fanciblock_icon_display_name($icon_name);
+      }
+    }
+
     $form['fontawesome_icon'] = array(
       '#type' => 'select',
       '#title' => t('Font Awesome icon'),
-      '#options' => fanciblock_box_fontawesome_parser(backdrop_get_path('module', 'fanciblock') . '/fontawesome/css/font-awesome.css'),
+      '#options' => $icons,
       '#default_value' => isset($box['fontawesome_icon']) ? $box['fontawesome_icon'] : '',
       '#description' => t('Please select font awesome icon. For more info see: <a href="http://fortawesome.github.io/Font-Awesome/cheatsheet/" target="_blank">Font Awesome Cheatsheet</a>.'),
     );
@@ -323,4 +334,13 @@ function fanciblock_box_fontawesome_parser($path) {
   }
   asort($result);
   return $result;
+}
+
+/**
+ * CSS parser from the file of css.
+ */
+function fanciblock_icon_display_name($name) {
+  $new = ucfirst(str_replace('-', ' ', $name));
+
+  return $new;
 }

@@ -49,7 +49,6 @@ function theme_fanciblock_admin_overview($variables) {
  */
 function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = array()) {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
-  dpm($fanciblock);
 
   $fanciblock += fanciblock_default_settings();
 
@@ -111,8 +110,8 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
         "fullwidth"  => t('Full width'),
         "medium"  => t('Very large (220x220)'),
         "thumbnail"  => t('Large (100x100)'),
-        "small_75x75" => t('Medium (75x75)'),
-        "tiny_40x40"  => t('Small (40x40)'),
+        "small" => t('Medium (75x75)'),
+        "tiny"  => t('Small (40x40)'),
       ),
       '#default_value' => isset($fanciblock['icon_size']) ? $fanciblock['icon_size'] : 'medium',
     );
@@ -392,16 +391,6 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
       'wrapper' => 'fanciblock-box-wrapper',
     ),
   );
-
-  // $form['row_settings'] = array(
-    // '#type' => 'container',
-    // '#id' => 'row_settings',
-    // '#parents' => array('row_settings'),
-  // );
-
-  // $form['row_settings'] = array(
-    // 'row' => backdrop_get_form('fanciblock_box_edit_box', $boxes[0]['boxid']),
-  // );
 
   return $form;
 }

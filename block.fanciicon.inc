@@ -38,7 +38,6 @@ class Fanciicon extends Block {
    * @return string
    */
   function getContent() {
-    dpm($this);
     if (!empty($this->settings)) {
       return fanciblock_build_fanciblocks('fanciicon', $this->settings);
     }
