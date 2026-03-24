@@ -259,8 +259,8 @@ function fanciblock_overview_title($fanciblock) {
 
 function fanciblock_autoload_info() {
   return array(
-    'Fanciicon' => 'block.Fanciicon.inc',
-    'Fanciblock' => 'block.Fanciblock.inc',
+    'Fanciicon' => 'block.fanciicon.inc',
+    'Fanciblock' => 'block.fanciblock.inc',
   );
 }
 
@@ -380,7 +380,7 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
     }
     elseif($delta == 'fanciicon') {
       $default_box += array(
-        'fontawesome_icon' => 'fa-tablet',
+        'fontawesome_icon' => 'monitor',
         'fontawesome_icon_color' => '#333333',
       );
     }

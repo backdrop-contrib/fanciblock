@@ -260,6 +260,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
   $form['actions']['cancel'] = array(
     '#type' => 'submit',
     '#value' => t('Cancel'),
+    '#limit_validation_errors' => array(),
     //'#attributes' => array('class' => array('layout-link-button')),
     '#submit' => array(
       'fanciblock_box_edit_box_cancel_submit',
