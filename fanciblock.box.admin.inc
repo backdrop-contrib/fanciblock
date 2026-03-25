@@ -13,8 +13,6 @@ function fanciblock_box_add_box($fanciblock) {
 function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL, $type = 'edit') {
   backdrop_add_css(backdrop_get_path('module', 'fanciblock') . '/css/fanciblock.admin.css');
   $fanciblock_boxes = $fanciblock['boxes'];
-  $box = $fanciblock_boxes[$boxid];
-  dpm($box);
 
   $form['boxid'] = array(
     '#type' => 'hidden',
@@ -108,7 +106,7 @@ function fanciblock_box_edit_box($form, &$form_state, $fanciblock, $boxid = NULL
   $form['actions']['cancel'] = array(
     '#type' => 'submit',
     '#value' => t('Cancel'),
-    '#limit_validation_errors' => array(),
+    '#limit_validation_errors' => array(array('fanciblock')),
     //'#attributes' => array('class' => array('layout-link-button')),
     '#submit' => array(
       'fanciblock_box_edit_box_cancel_submit',
