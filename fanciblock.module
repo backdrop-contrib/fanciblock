@@ -20,45 +20,6 @@ function fanciblock_config_info() {
 }
 
 /**
- *  Implementation of hook_cron()
- *  
- *  Deletes unused fanciblock settings. Fanciblocks are added via Layout builder
- *  and their settings are saved in hook_block_save to fanciblock.settings.json.
- *  
- *  When a block is removed from Layout builder, there is no way to tell this
- *  happened immediately. This may change; see https://github.com/backdrop/backdrop-issues/issues/767.
- *  
- *  Until then this checks for removed layout blocks to delete their settings on 
- *  cron run.
- *  
- */
-/* function fanciblock_cron() {
-  // Find all Fanciblocks stored in Layout settings and save to an array.
-  $all_layouts = layout_get_all_configs('layout');
-  $layouts = array();
-  foreach($all_layouts as $layout_name => $active_layouts) {
-    foreach($active_layouts['content'] as $uuid => $block) {
-      if($block['data']['module'] == 'fanciblock') {
-        $layouts[] = $block['data']['settings']['block_settings']['fanciblock_name'];
-      }
-    }
-  }
-  // Then check if the Fanciblocks in our Fanciblock config are actually in a 
-  // layout by checking if its ID is in the $layouts array we just built.
-  $settings = config('fanciblock.settings');
-  $data = $settings->get();
-  foreach($data as $key => $setting) {
-    // If the Fanciblock setting is no longer in a Layout, delete it.
-    if(is_null($setting) || (is_array($setting) && !in_array($key, $layouts))) {
-      unset($data[$key]);
-    }
-  }
-  $settings->setData($data);
-  $settings->save();
-}
- */
-
-/**
  * Implements hook_permission().
  */
 function fanciblock_permission() {
@@ -280,61 +241,6 @@ function fanciblock_block_info() {
 }
 
 /**
- * Implements hook_block_configure().
- */
-/* function fanciblock_block_configure($delta = '', $settings = array()) {
-  $form = array();
-  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    module_load_include('inc', 'fanciblock', 'fanciblock.admin');
-    $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
-    if(!empty($fanciblock)) {
-      $settings = $fanciblock;
-    }
-    $form = fanciblock_edit_box('edit', $delta, $settings);
-  }
-  return $form;
-}
- */
-/**
- *  Saves a block (fanciblock) during block configure.
- *  
- *  @param [in] $delta Parameter_Description
- *  @return Return_Description
- *  
- *  @details Details
- */
-/* function fanciblock_block_save($delta, &$edit = array()) {
-  $edit = _flatten_fanciblock_settings($edit);
-  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    $config = config('fanciblock.settings');
-    
-    // Set up defaults.
-    $default_fid = $config->get('default_fid');
-    $default_fanciblock_uri = $config->get('default_fanciblock_uri');
-    $default_box = array(
-      'fanciblock_name' => $edit['fanciblock_name'], 
-      'boxid' => '', 
-      'box_title' => $edit['fanciblock_title'], 
-      'weight' => 0, 
-      'box_content' => array('value' => 'Hello!'),
-      'icon_link' => '',
-    );
-    if ($delta == 'fanciblock') {
-      $default_box += array(
-        'fanciblock_fid' => $default_fid, 
-        'fanciblock_uri' => $default_fanciblock_uri, 
-      );
-    }
-    elseif($delta == 'fanciicon') {
-      $default_box += array(
-        'fontawesome_icon' => 'fa-tablet',
-        'fontawesome_icon_color' => '#333333',
-      );
-    }
-  }
-}
- */
-/**
  * Save a fanciblock box.
  *
  * @param $box
@@ -367,7 +273,7 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
     $default_box = array(
       'fanciblock_name' => isset($fanciblock['fanciblock_name']) ? $fanciblock['fanciblock_name'] : '', 
       'boxid' => '', 
-      'box_title' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : 'Box title', 
+      'box_title' => !empty($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : 'Box title', 
       'weight' => 0, 
       'box_content' => array('value' => 'Hello!'),
       'icon_link' => '',
@@ -384,40 +290,13 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
         'fontawesome_icon_color' => '#333333',
       );
     }
-    $title = $default_box['box_title'];
     $default_box['boxid'] = $i . $id;
-    $default_box['box_title'] = empty($title) ? '' : $title . ' ' . $i;
     $default_box['fanciblock_type'] = (string) $delta;
     $boxes[$i . $id] = $default_box;
     $i++;
   }
   return $boxes;
 }
-
-/**
- * Implements hook_block_view().
- */
-/* function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
-  if ($delta == 'fanciblock' || $delta == 'fanciicon') {
-    $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
-
-    // Block settings stay in Layout even if the module is unintalled, and cause
-    // white-screen on view. So dont show anything unless we find a config file.
-    if($fanciblock) {
-      $data['subject'] = NULL;
-      // THis adds the a fake link in the fanciblock menu so that we can identify it.
-      // See hook_menu for details.
-      $data['content'] =  array(
-        '#markup' => fanciblock_build_fanciblocks($delta, $fanciblock['settings']),
-        '#contextual_links' => array(
-          'fanciblock' => array('fanciblock/stub', array($settings['fanciblock_name'])),
-        ),
-      );
-      return $data;
-    }
-  }
-}
- */
 
 /**
  * Build a fanciblock and all contained boxes and load necessary CSS and JS.
@@ -670,10 +549,7 @@ function fanciblock_add_additional_box($form, &$form_state) {
  * removing additional paths.
  */
 function fanciblock_box_add_delete_ajax($form, &$form_state) {
-  // $commands[] = ajax_command_remove('.l-messages');
-  // $commands[] = ajax_command_html('#layout-messages', theme('status_messages'));
   $commands[] = ajax_command_html('#fanciblock-box-wrapper', backdrop_render($form['box_edit']));
-  // $commands[] = ajax_command_html('#layout-contexts', backdrop_render($form['context_wrapper']));
   return array(
     '#type' => 'ajax',
     '#commands' => $commands,
@@ -694,4 +570,44 @@ function fanciblock_set_tempstore($fanciblock) {
   }
 
   tempstore_set('fanciblock', $fanciblock['fanciblock_name'], $fanciblock, 604800);
+}
+
+/**
+ * CSS parser from the file of css.
+ */
+function fanciblock_box_fontawesome_parser($path) {
+  $css = backdrop_load_stylesheet($path, TRUE);
+
+  preg_match_all( '/(?ims)([a-z0-9\s\.\:#_\-@,]+)\{([^\}]*)\}/', $css, $arr);
+  $result = array();
+  foreach ($arr[0] as $i => $x) {
+    $selector = trim($arr[1][$i]);
+    $rules = explode(';', trim($arr[2][$i]));
+    $rules_arr = array();
+    foreach ($rules as $strRule) {
+      if (!empty($strRule)) {
+        $rule = explode(":", $strRule);
+        $rules_arr[trim($rule[0])] = trim($rule[1]);
+      }
+    }
+
+    $selectors = explode(',', trim($selector));
+    foreach ($selectors as $strSel) {
+      if(array_key_exists('content', $rules_arr)) {
+        $strSel = substr($strSel, 1, -7);
+        $result[$strSel] = $strSel;
+      }
+    }
+  }
+  asort($result);
+  return $result;
+}
+
+/**
+ * CSS parser from the file of css.
+ */
+function fanciblock_icon_display_name($name) {
+  $new = ucfirst(str_replace('-', ' ', $name));
+
+  return $new;
 }

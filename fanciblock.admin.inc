@@ -5,46 +5,6 @@
  */
 
 /**
- * Menu callback which shows an overview page of all the fanciblocks.
- */
-function fanciblock_overview_page() {
-  $result = config_get('fanciblock.settings');
-  
-  if($result) {
-    $header = array(t('Fanciblock name'), 'data' => t('Operations'));
-    $rows = array();
-    foreach ($result as $key => $fanciblock) {
-      if(is_array($fanciblock)) {
-        $row = array();
-        $row[] = check_plain($key);
-        $row[] = array('data' => l(t('edit'), 'admin/config/media/fanciblocks/' . $key));
-        $rows[] = $row;
-      }
-    }
-  }
-  else {
-    $header = array(t('fanciblock Name'), array('data' => t('Operations')));
-    $rows = array();
-    $rows[] = array(array('data' => t('There are no fanciblock yet')));
-  }
-  return theme('table', array('header' => $header, 'rows' => $rows));
-}
-
-/**
- * Returns HTML for a fanciblock title and description for the fanciblock overview page.
- *
- * @param $variables
- *   An associative array containing:
- *   - title: The fanciblock's title.
- *
- * @ingroup themeable
- */
-function theme_fanciblock_admin_overview($variables) {
-  $output = check_plain($variables['title']);
-  return $output;
-}
-
-/**
  * Menu callback; Build the form that handles the adding/editing of a fanciblock.
  */
 function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = array()) {
