@@ -1,38 +1,6 @@
 <?php
 
 /**
- * Returns a small icon for list views.
- */
-function _fanciicon_fontawesome_icon_build($box) {
-  if($box['fanciblock_type'] == 'fanciicon') {
-    return theme('fanciblock_fontawesome_icon_build', array('class' => $box['fontawesome_icon']));
-  }
-  elseif($box['fanciblock_type'] == 'fanciicon') {
-    return theme('image_style', array('uri' => $box['fanciblock_uri'], 'style_name' => 'tiny_40x40'));
-  }
-}
-
-/**
- * Returns HTML for a fanciblock title and description for the fanciblock overview page.
- *
- * @param $variables
- *   An associative array containing:
- *   - title: The fanciblock's title.
- *
- * @ingroup themeable
- */
-function theme_fanciblock_fontawesome_icon_build($variables) {
-  $options = array('attributes' => array(
-    'style' => $variables['style'], 
-    'class' => array(
-      $variables['size'], 
-      $variables['looks']
-  )));
-
-  return icon($variables['class'], $options);
-}
-
-/**
  * Menu callback; Build the fanciblock box editing form.
  */
 function fanciblock_box_add_box($fanciblock) {

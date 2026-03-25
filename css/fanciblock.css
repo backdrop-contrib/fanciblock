@@ -92,7 +92,7 @@ clear:both;
   text-align: center;
 }
 .fanciblock-icon .fanciblock-icon_size-xlarge {
-  font-size: 150px;
+  width: 240px;
 }
 .fanciblock-icon .fanciblock-icon_size-xlarge.fanciblock-icon_style-circle,
 .fanciblock-icon .fanciblock-icon_size-xlarge.fanciblock-icon_style-square {
@@ -101,7 +101,7 @@ clear:both;
   line-height: 240px;
 }
 .fanciblock-icon .fanciblock-icon_size-large {
-  font-size: 110px;
+  width: 180px;
 }
 .fanciblock-icon .fanciblock-icon_size-large.fanciblock-icon_style-circle,
 .fanciblock-icon .fanciblock-icon_size-large.fanciblock-icon_style-square {
@@ -110,7 +110,7 @@ clear:both;
   line-height: 180px;
 }
 .fanciblock-icon .fanciblock-icon_size-medium {
-  font-size: 70px;
+  width: 105px;
 }
 .fanciblock-icon .fanciblock-icon_size-medium.fanciblock-icon_style-circle,
 .fanciblock-icon .fanciblock-icon_size-medium.fanciblock-icon_style-square {
@@ -119,17 +119,17 @@ clear:both;
   line-height: 105px;
 }
 .fanciblock-icon .fanciblock-icon_size-small {
-  font-size: 45px;
+  width: 75px;
 }
 .fanciblock-icon .fa.fanciblock-icon_size-small.fanciblock-icon_style-circle,
 .fanciblock-icon .fa.fanciblock-icon_size-small.fanciblock-icon_style-square {
-  font-size: 40px;
+  width: 75px;
   width: 75px;
   height: 75px;
   line-height: 75px;
 }
 .fanciblock-icon .fa.fanciblock-icon_size-tiny {
-  font-size: 25px;
+  width: 40px;
 }
 .fanciblock-icon .fa.fanciblock-icon_size-tiny.fanciblock-icon_style-circle,
 .fanciblock-icon .fa.fanciblock-icon_size-tiny.fanciblock-icon_style-square {

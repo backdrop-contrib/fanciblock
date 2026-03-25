@@ -208,3 +208,22 @@ function theme_fanciblock_box_preview(&$variables) {
   return $output;
 }
 
+/**
+ * Returns HTML for a fanciblock title and description for the fanciblock overview page.
+ *
+ * @param $variables
+ *   An associative array containing:
+ *   - title: The fanciblock's title.
+ *
+ * @ingroup themeable
+ */
+function theme_fanciblock_fontawesome_icon_build($variables) {
+  $options = array('attributes' => array(
+    'style' => $variables['style'], 
+    'class' => array(
+      $variables['size'], 
+      $variables['looks']
+  )));
+
+  return icon($variables['class'], $options);
+}
