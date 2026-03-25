@@ -50,6 +50,7 @@ class Fanciicon extends Block {
     parent::form($form, $form_state);
     form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.box.admin');
     form_load_include($form_state, 'inc', 'fanciblock', 'fanciblock.admin');
+    dpm($this->settings);
     $tempstore_settings = fanciblock_get_settings($this->settings['fanciblock_name']);
     $settings = $tempstore_settings ? $tempstore_settings : $this->settings;
     $form += fanciblock_edit_box($form, $form_state, 'edit', 'fanciicon', $settings);

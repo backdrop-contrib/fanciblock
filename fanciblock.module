@@ -32,7 +32,7 @@ function fanciblock_config_info() {
  *  cron run.
  *  
  */
-function fanciblock_cron() {
+/* function fanciblock_cron() {
   // Find all Fanciblocks stored in Layout settings and save to an array.
   $all_layouts = layout_get_all_configs('layout');
   $layouts = array();
@@ -56,7 +56,7 @@ function fanciblock_cron() {
   $settings->setData($data);
   $settings->save();
 }
-
+ */
 
 /**
  * Implements hook_permission().
@@ -282,7 +282,7 @@ function fanciblock_block_info() {
 /**
  * Implements hook_block_configure().
  */
-function fanciblock_block_configure($delta = '', $settings = array()) {
+/* function fanciblock_block_configure($delta = '', $settings = array()) {
   $form = array();
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     module_load_include('inc', 'fanciblock', 'fanciblock.admin');
@@ -294,7 +294,7 @@ function fanciblock_block_configure($delta = '', $settings = array()) {
   }
   return $form;
 }
-
+ */
 /**
  *  Saves a block (fanciblock) during block configure.
  *  
@@ -303,7 +303,7 @@ function fanciblock_block_configure($delta = '', $settings = array()) {
  *  
  *  @details Details
  */
-function fanciblock_block_save($delta, &$edit = array()) {
+/* function fanciblock_block_save($delta, &$edit = array()) {
   $edit = _flatten_fanciblock_settings($edit);
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     $config = config('fanciblock.settings');
@@ -333,7 +333,7 @@ function fanciblock_block_save($delta, &$edit = array()) {
     }
   }
 }
-
+ */
 /**
  * Save a fanciblock box.
  *
@@ -397,7 +397,7 @@ function _fanciblock_add_default_boxes($number, $fanciblock, $delta) {
 /**
  * Implements hook_block_view().
  */
-function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
+/* function fanciblock_block_view($delta = '', $settings = array(), $contexts = array()) {
   if ($delta == 'fanciblock' || $delta == 'fanciicon') {
     $fanciblock = fanciblock_get_settings($settings['fanciblock_name']);
 
@@ -417,7 +417,7 @@ function fanciblock_block_view($delta = '', $settings = array(), $contexts = arr
     }
   }
 }
-
+ */
 
 /**
  * Build a fanciblock and all contained boxes and load necessary CSS and JS.
@@ -488,6 +488,7 @@ function _fanciblock_validate_color_value($element, &$form_state) {
  */
 function fanciblock_get_settings($fanciblock_name = NULL) {
   $item = tempstore_get('fanciblock', $fanciblock_name);
+  dpm($item);
   if ($item) {
     return $item;
   }
@@ -531,6 +532,7 @@ function fanciblock_default_settings() {
  */
 function fanciblock_box_edit_box_open($form, &$form_state) {
   $fanciblock = $form_state['fanciblock'];
+  dpm($fanciblock);
   // $fanciblock['boxes'] = $form_state['values']['block_settings']['boxes'];
   $fanciblock['layout_name'] = $form_state['layout']->name;
   $fanciblock['block'] = $form_state['block']->uuid;
@@ -546,6 +548,7 @@ function fanciblock_box_edit_box_open($form, &$form_state) {
  */
 function fanciblock_box_edit_box_cancel_submit($form, &$form_state) {
   $fanciblock = $form_state['values']['fanciblock'];
+  dpm($fanciblock, 'fanciblock_box_edit_box_cancel_submit');
   $layout_name = $fanciblock['layout_name'];
   // $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];
   $form_state['redirect'] = 'admin/structure/layouts/manage/' . $layout_name . '/configure-block/editor/' . $fanciblock['block'];
@@ -592,6 +595,7 @@ function fanciblock_box_edit_box_submit($form, &$form_state) {
     $box['fontawesome_icon_color'] = $form_state['values']['fontawesome_icon_color'];
   }
   $fanciblock['boxes'][$box['boxid']] = $box;
+  dpm($fanciblock);
   fanciblock_set_tempstore($fanciblock);
   $layout_name = $fanciblock['layout_name'];
   // $form_state['redirect'] = 'admin/config/media/fanciblocks/' . $box['fanciblock_name'];

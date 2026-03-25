@@ -65,10 +65,18 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
     '#description' => t('A unique name for this Fanciblock.'),
     '#default_value' => isset($fanciblock['fanciblock_title']) ? $fanciblock['fanciblock_title'] : '',
   );
-  $fanciblock['fanciblock_name'] = isset($form_state['block']->uuid) ? $form_state['block']->uuid : '';
   $form['fanciblock_name'] = array(
-    '#value' => $fanciblock['fanciblock_name'],
-    '#type' => 'value',
+    '#size' => 60,
+    '#maxlength' => 64,
+    '#required' => TRUE,
+    '#type' => 'machine_name',
+    '#title' => t('Fanciblock ID'),
+    '#default_value' => isset($fanciblock['fanciblock_name']) ? $fanciblock['fanciblock_name'] : '',
+    '#description' => t('A unique name for this Fanciblock. It must only contain lowercase letters, numbers and underscores.'),
+    '#machine_name' => array(
+      'exists' => 'fanciblock_load',
+      'source' => array('fanciblock_title'),
+    ),
   );
 
   // Appearance fanciblock
@@ -310,9 +318,16 @@ function fanciblock_edit_box(&$form, &$form_state, $type, $delta, $fanciblock = 
   $form_state['fanciblock'] = $fanciblock;
   $form_state['delta'] = $delta;
 
-  $fanciblock['boxes'] = !empty($fanciblock['boxes']) ? $fanciblock['boxes'] : _fanciblock_add_default_boxes(1, $fanciblock, $delta);
-  $form_state['boxes'] = !empty($form_state['boxes']) ? $form_state['boxes'] : $fanciblock['boxes'];
+  if (!empty($fanciblock['boxes'])) {
+    foreach ($fanciblock['boxes'] as $box) {
+      $box['fanciblock_name'] = $fanciblock['fanciblock_name'];
+    }
+  }
+  else {
+    $fanciblock['boxes'] = _fanciblock_add_default_boxes(1, $fanciblock, $delta);
+  }
 
+  $form_state['boxes'] = !empty($form_state['boxes']) ? $form_state['boxes'] : $fanciblock['boxes'];
 
   $not_saved = empty($form_state['block']->uuid);
   $fanciblock['disabled'] = $not_saved;
